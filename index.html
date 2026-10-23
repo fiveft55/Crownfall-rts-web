@@ -1,0 +1,985 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Crownfall — Monarch</title>
+    <link rel="icon" href="./favicon.svg" />
+    <link rel="stylesheet" href="./style.css" />
+    <link rel="stylesheet" href="./monarch.css" />
+  </head>
+  <body data-screen="menu">
+    <canvas
+      id="battlefield"
+      aria-label="Isometric battlefield: select units with left click and command with right click"
+      tabindex="0"
+    ></canvas>
+    <header id="topbar">
+      <a class="wordmark" href="./"
+        >♜
+        <span
+          >Crownfall<small
+            ><span id="release-version">0.5.Monarch</span></small
+          ></span
+        ></a
+      >
+      <div id="resources">
+        <div><i>◒</i><span id="food">350</span><small>FOOD</small></div>
+        <div><i>♧</i><span id="wood">420</span><small>WOOD</small></div>
+        <div><i>◆</i><span id="gold">180</span><small>GOLD</small></div>
+        <div><i>▰</i><span id="stone">180</span><small>STONE</small></div>
+        <div>
+          <i>♟</i><span id="population">7 / 20</span><small>POPULATION</small>
+        </div>
+      </div>
+      <div class="match-controls">
+        <span id="clock">00:00</span
+        ><button id="speed" title="Change game speed (host)">1×</button
+        ><button id="pause" title="Pause (Space)">Ⅱ</button
+        ><button
+          id="sound"
+          title="Toggle music and ambience"
+          aria-pressed="true"
+        >
+          ♫</button
+        ><button id="grid" title="Toggle tile grid (G)" aria-pressed="false">
+          ▦</button
+        ><button id="workshop" title="Civilizations and map forge">⌘</button
+        ><button id="settings" title="Lobby and server controls" class="hidden">
+          ⚙</button
+        ><button
+          id="keyboard-settings"
+          title="Keyboard shortcuts and camera"
+          aria-label="Keyboard shortcuts"
+        >
+          ⌨</button
+        ><button id="help" title="Field guide (?)">?</button>
+      </div>
+    </header>
+    <section id="map-label">
+      <div class="eyebrow">A REAL-TIME STRATEGY CHRONICLE</div>
+      <h1>The Riverlands</h1>
+      <p>
+        <span class="live-dot"></span
+        ><span id="mode-label">Two kingdoms. One crown.</span>
+      </p>
+    </section>
+    <div id="objective">
+      <span>⚑</span>
+      <div>
+        <small>YOUR OBJECTIVE</small>
+        <p>Destroy the rival Town Center</p>
+      </div>
+    </div>
+    <div id="toast" role="status"></div>
+    <section id="lobby" class="hidden" aria-label="Skirmish and LAN lobby">
+      <div class="eyebrow">GATHER YOUR COMMANDERS</div>
+      <h2>The war council</h2>
+      <p class="lobby-subtitle">
+        Two kingdoms by default, up to sixteen. Choose your banners and forge an
+        alliance.
+      </p>
+      <div id="lobby-layout">
+        <div>
+          <div class="panel-heading">
+            <span>COMMANDERS</span><span id="lobby-count"></span>
+          </div>
+          <div id="lobby-players"></div>
+          <button id="add-ai" class="watch-button">+ ADD AI KINGDOM</button>
+          <p class="seat-help">
+            Choose each computer’s difficulty and civilization. Matching team
+            numbers are allies; “No team” fights everyone. AI seats are always
+            ready.
+          </p>
+        </div>
+        <div class="lobby-settings">
+          <div class="panel-heading"><span>THE BATTLEFIELD</span></div>
+          <label
+            >Map<select id="lobby-map">
+              <option value="0">The Riverlands · two crossings</option>
+              <option value="1">Highland March · open terrain</option>
+              <option value="2">Twin Lakes · lakes and woodland</option>
+            </select></label
+          >
+          <div class="field-row">
+            <label
+              >Width in tiles<input
+                id="lobby-width"
+                type="number"
+                min="48"
+                max="128"
+                value="64" /></label
+            ><label
+              >Height in tiles<input
+                id="lobby-height"
+                type="number"
+                min="48"
+                max="128"
+                value="64"
+            /></label>
+          </div>
+          <div class="field-row">
+            <label>Kingdom seats<select id="lobby-capacity"></select></label
+            ><label
+              >Map seed<input
+                id="lobby-seed"
+                type="number"
+                min="1"
+                max="999999"
+                value="7"
+            /></label>
+          </div>
+          <button id="apply-map">APPLY MAP SETTINGS</button>
+          <p id="lobby-map-note">
+            48–128 tiles per side. Choose 96 or 128 for a large council.
+            Changing settings clears readiness.
+          </p>
+          <div class="share-address" id="lan-share">
+            <small>SHARE THIS SERVER ADDRESS</small
+            ><code id="server-address"></code
+            ><span
+              >Use the LAN address printed by the server for other
+              computers.</span
+            >
+          </div>
+        </div>
+      </div>
+      <div class="observer-seats" id="lan-observer-seats">
+        <span id="operator-name"></span><span id="spectator-list"></span
+        ><a href="./?seat=player" target="_blank" rel="noopener"
+          >Open a player tab ↗</a
+        >
+      </div>
+      <div class="lobby-bottom">
+        <button id="leave-lobby">← LEAVE LOBBY</button
+        ><button id="spectate-seat">SPECTATE · AI TAKES MY SEAT</button
+        ><button id="lobby-console">HOSTING CONSOLE ↗</button>
+        <span id="lobby-status">Waiting for commanders…</span
+        ><button id="ready">READY UP</button
+        ><button id="start-match" class="primary">START MATCH →</button>
+      </div>
+    </section>
+    <main id="welcome" class="menu-shell" aria-label="Crownfall main menu">
+      <header class="menu-header">
+        <a class="menu-brand" href="./" aria-label="Crownfall main menu"
+          ><span aria-hidden="true">♜</span
+          ><span>Crownfall<small id="menu-version">0.5.Monarch</small></span></a
+        >
+        <div class="welcome-story">
+          <div class="eyebrow">A REALM WAITING TO BE BUILT</div>
+          <h2>A kingdom starts with <em>you.</em></h2>
+          <p>Gather your people. Write your history.</p>
+        </div>
+        <div class="menu-account">
+          <label class="name-field"
+            >YOUR NAME<input
+              id="player-name"
+              maxlength="24"
+              placeholder="Commander"
+              autocomplete="nickname"
+          /></label>
+          <button
+            id="welcome-settings"
+            title="Settings & graphics"
+            aria-label="Settings & graphics"
+          >
+            ⚙ <span>SETTINGS</span>
+          </button>
+        </div>
+      </header>
+      <nav class="menu-rail" aria-label="Main menu actions">
+        <div class="play-intro">
+          <h3>Make your next move.</h3>
+          <p>Build a home. Rally your people.</p>
+        </div>
+        <div class="menu-section-title">PLAY</div>
+        <div class="local-options">
+          <button id="solo" class="primary" disabled>
+            ⚔ &nbsp; SOLO VS. AI</button
+          ><button id="skirmish" disabled>SKIRMISH LOBBY</button>
+        </div>
+        <div class="menu-section-title native-only">MULTIPLAYER</div>
+        <div class="lan-buttons">
+          <button class="primary" id="host" disabled>
+            ♜ &nbsp; HOST & PLAY
+          </button>
+          <button id="join" disabled>⚑ &nbsp; JOIN AS PLAYER</button>
+        </div>
+        <button id="welcome-console" class="watch-button">
+          HOSTING CONSOLE ↗
+        </button>
+        <button id="watch" class="watch-button" disabled>
+          ◉ &nbsp; SPECTATE</button
+        ><button id="welcome-workshop" class="watch-button">
+          ⌘ &nbsp; MAP & CIV FORGE
+        </button>
+
+        <details class="menu-connection">
+          <summary>Join another server</summary>
+          <label class="name-field" id="join-address-field"
+            >SERVER ADDRESS
+            <div class="join-address-row">
+              <input
+                id="join-address"
+                placeholder="http://192.168.1.20:8080"
+                aria-label="Game server address"
+              /><button id="open-join-address">OPEN →</button>
+            </div>
+          </label>
+        </details>
+        <div class="rail-note">One crown. A thousand stories.</div>
+      </nav>
+      <section
+        class="menu-stage"
+        aria-label="Animated settlement preview"
+        aria-busy="true"
+      >
+        <div class="menu-status">
+          <div id="welcome-error" role="alert"></div>
+        </div>
+      </section>
+      <footer class="menu-footer">
+        <div class="menu-edition">
+          <span id="preview-crest" aria-hidden="true">♜</span
+          ><span
+            ><b id="preview-name">Imperials</b
+            ><small>ONE CROWN TO RULE THEM ALL</small></span
+          >
+        </div>
+        <div class="welcome-council">
+          <label class="name-field"
+            >FACTION<select id="welcome-civ"></select
+          ></label>
+          <label class="name-field"
+            >YOUR BANNER<select id="welcome-color">
+              <option value="">Automatic</option>
+            </select></label
+          >
+          <label id="difficulty-setting"
+            >SOLO AI
+            <select
+              id="ai-difficulty"
+              aria-describedby="difficulty-description"
+            >
+              <option value="1">Normal</option>
+            </select>
+            <small id="difficulty-description"
+              >A balanced opponent that builds up and launches regular
+              raids.</small
+            >
+          </label>
+          <details id="match-options">
+            <summary>MAP SETTINGS <span>＋</span></summary>
+            <div>
+              <label
+                >Map<select id="map-choice">
+                  <option value="0">The Riverlands</option>
+                  <option value="1">Highland March</option>
+                  <option value="2">Twin Lakes</option>
+                </select></label
+              >
+              <label
+                >Map size<select id="map-preset">
+                  <option value="64" selected>64 × 64 · small</option>
+                  <option value="96">96 × 96 · standard</option>
+                  <option value="128">128 × 128 · large</option>
+                  <option value="custom">Custom dimensions</option>
+                </select></label
+              >
+              <div class="field-row hidden" id="custom-dimensions">
+                <label
+                  >Width<input
+                    id="map-width"
+                    type="number"
+                    min="48"
+                    max="128"
+                    value="64" /></label
+                ><label
+                  >Height<input
+                    id="map-height"
+                    type="number"
+                    min="48"
+                    max="128"
+                    value="64"
+                /></label>
+              </div>
+              <div class="field-row">
+                <label>LAN seats<select id="max-players"></select></label
+                ><label
+                  >Map seed<input
+                    id="map-seed"
+                    type="number"
+                    min="1"
+                    max="999999"
+                    value="7"
+                /></label>
+              </div>
+              <button data-close-menu type="button">CLOSE MAP SETTINGS</button>
+            </div>
+          </details>
+          <details class="race-story">
+            <summary>Story & traits</summary>
+            <div class="story-panel">
+              <p id="welcome-race-story"></p>
+              <button data-close-menu type="button">CLOSE STORY</button>
+            </div>
+          </details>
+        </div>
+        <div class="welcome-foot">
+          NATIVE C++ ENGINE <b>·</b> PROCEDURAL PIXEL ART<br /><span
+            >16 kingdoms · 4 spectators · dedicated host</span
+          >
+        </div>
+      </footer>
+    </main>
+    <button
+      id="debug-toggle"
+      title="Toggle performance overlay"
+      aria-pressed="false"
+    >
+      FPS
+    </button>
+    <pre id="performance-overlay" hidden aria-live="off"></pre>
+    <div id="game-hints">
+      Drag to select <b>·</b> Right-click to command <b>·</b>
+      <span data-shortcut="panUp">↑</span>
+      <span data-shortcut="panDown">↓</span>
+      <span data-shortcut="panLeft">←</span>
+      <span data-shortcut="panRight">→</span> to pan <b>·</b> Scroll to zoom
+      <b>·</b> <span data-shortcut="grid">G</span> for tile grid
+    </div>
+    <div id="observer-tools" class="hidden">
+      <span id="observer-role">SPECTATOR</span
+      ><select id="observe-player" aria-label="Kingdom to inspect"></select
+      ><small>Full map vision · read-only</small>
+    </div>
+    <aside id="server-console" class="hidden">
+      <div class="panel-heading">
+        <span>DEDICATED SERVER CONSOLE</span
+        ><button id="close-console" title="Hide server console">×</button>
+      </div>
+      <h2>The watchtower</h2>
+      <p id="console-status"></p>
+      <div id="console-stats"></div>
+      <div id="console-roster"></div>
+      <div class="console-controls">
+        <button id="console-pause">PAUSE / RESUME</button
+        ><button id="console-restart">RESTART MATCH</button
+        ><button id="console-lobby">RETURN TO LOBBY</button>
+      </div>
+      <p class="console-note">
+        Operator seat · read-only battlefield<br />To play, open a separate
+        player tab.
+      </p>
+      <a href="./?seat=player" target="_blank" rel="noopener"
+        >OPEN PLAYER TAB ↗</a
+      >
+    </aside>
+    <footer id="command-deck">
+      <section class="minimap-wrap">
+        <div class="panel-heading">
+          <span>THE RIVERLANDS</span><span id="map-size">64 × 64</span>
+        </div>
+        <canvas
+          id="minimap"
+          width="220"
+          height="155"
+          aria-label="Minimap — click to move the camera"
+        ></canvas>
+        <div class="minimap-foot">
+          <span>● YOUR KINGDOM</span><span>● OTHER KINGDOMS</span>
+        </div>
+      </section>
+      <section id="selection-panel">
+        <div class="panel-heading">
+          <span id="selection-label">YOUR SETTLEMENT</span
+          ><span id="selected-count">BLUE BANNER</span>
+        </div>
+        <div id="selection-content">
+          <div id="portrait">♜</div>
+          <div id="unit-info">
+            <h2>Command your kingdom</h2>
+            <p>Select a unit or building to begin.</p>
+            <div id="health-track"><div id="health-fill"></div></div>
+            <small id="unit-detail">Your story begins in the Dark Age.</small>
+          </div>
+        </div>
+        <div id="selection-roster"></div>
+      </section>
+      <section id="actions-panel">
+        <div class="panel-heading">
+          <span>UNIT ACTIONS</span><span id="age-label">I · DARK AGE</span>
+        </div>
+        <div
+          id="action-tabs"
+          role="tablist"
+          aria-label="Villager action categories"
+        ></div>
+        <div id="actions"></div>
+        <div id="queue"></div>
+      </section>
+      <section id="chronicle">
+        <div class="panel-heading">
+          <span>THE CHRONICLE</span><span>✦</span>
+        </div>
+        <p id="notice">Your people are ready to build a new kingdom.</p>
+        <button id="advance" title="Advance to the next age">
+          ↟ &nbsp; ADVANCE AGE <small>350 food · 100 gold</small>
+        </button>
+      </section>
+    </footer>
+    <div id="tooltip" class="hidden"></div>
+    <dialog id="guide">
+      <button id="close-guide" class="close">×</button>
+      <div class="eyebrow">THE COMMANDER’S COMPANION</div>
+      <h2>Your field guide</h2>
+      <div class="guide-grid">
+        <article>
+          <h3>Monarch</h3>
+          <p>
+            Choose one of ten fantasy peoples before joining. Stories and
+            bonuses appear under People &amp; Civilization. Barracks train early
+            infantry, ranges train each people’s bow units, and stables open in
+            Feudal Age. Highlanders and Orcs throw spears instead of building
+            ranges. Dwarves use crossbows; Orcs, Goblins and Dwarves ride hogs.
+          </p>
+          <p>
+            Castle Age unlocks the 3 × 3 Fortress and your people’s unique
+            champion. Warlords and Duet Bards grant nearby allied units 12%
+            movement and 10% attack, without stacking. Ranged garrisons add one
+            shot each to defensive buildings, up to seven.
+          </p>
+        </article>
+        <article>
+          <h3>Repairs & research</h3>
+          <p>
+            Select villagers and use the Commands, Economy buildings or Military
+            buildings categories. Right-click a damaged friendly building, or
+            press R and click it, to repair. Repairs consume half the original
+            construction resources per full health bar restored.
+          </p>
+          <p>
+            Build a School for gathering and villager walking upgrades. In the
+            Feudal Age, build a Blacksmith for soldier attack and armor
+            upgrades. Select the structure to research; its price and age
+            requirements appear on hover.
+          </p>
+        </article>
+        <article>
+          <h3>01 &nbsp; An economy first</h3>
+          <p>
+            Select villagers. Right-click berry bushes for food, trees for wood,
+            and deposits for gold or stone. Workers carry resources back to the
+            Town Center. Build farms for lasting food.
+          </p>
+        </article>
+        <article>
+          <h3>02 &nbsp; A place to call home</h3>
+          <p>
+            With villagers selected, choose a building below, then click visible
+            empty ground. The workers walk over and construct it. Houses
+            increase the population limit. Right-click cancels placement; Escape
+            opens the game menu.
+          </p>
+        </article>
+        <article>
+          <h3>03 &nbsp; Raise your banner</h3>
+          <p>
+            Select your Town Center to train villagers. Barracks train spearmen.
+            Advance to the Feudal Age for archers and towers, then the Castle
+            Age for knights. Spearmen counter cavalry.
+          </p>
+        </article>
+        <article>
+          <h3>04 &nbsp; Across the river</h3>
+          <p>
+            Use either bridge to reach the rival kingdom. Right-click enemies to
+            attack. Use Attack or Attack-move, then click a target or
+            destination. Patrol travels back and forth; Defend returns to its
+            area. Destroy their final Town Center to win. AI kingdoms build and
+            raid in solo or LAN games. Matching team numbers share vision and
+            victory.
+          </p>
+        </article>
+        <article>
+          <h3>05 &nbsp; Rally and shelter</h3>
+          <p>
+            Select a production building and right-click to set its rally flag.
+            A resource flag sends new villagers to gather. Right-click your Town
+            Center or tower with units selected to shelter them; select the
+            building and Deploy garrison to release them. Town Centers can also
+            train villagers directly inside.
+          </p>
+        </article>
+        <article>
+          <h3>06 &nbsp; Your next orders</h3>
+          <p>
+            Shift + right-click queues movement flags. Units follow them in
+            order, finding routes around obstacles. Escape opens audio,
+            controls, info and surrender. Confirming Surrender returns to the
+            main menu. Defeated LAN commanders watch only their team's shared
+            vision, with fog of war.
+          </p>
+        </article>
+      </div>
+      <p class="guide-note">
+        Delete removes your selected units immediately. Buildings require two
+        confirmation clicks before razing. Fallen units keep their last sight
+        for five game seconds before fog returns; surviving units and buildings
+        keep revealing normally. Damaged buildings progress through smoke,
+        embers, fire and structural damage.
+      </p>
+      <div class="shortcuts">
+        <span><kbd>↑ ↓ ← →</kbd> Pan</span><span><kbd>Wheel</kbd> Zoom</span
+        ><span><kbd>Shift</kbd> Add selection</span
+        ><span><kbd>Double-click</kbd> Same units</span
+        ><span><kbd>Ctrl + 1–9</kbd> Save group</span
+        ><span><kbd>1–9</kbd> Select group</span
+        ><span><kbd data-shortcut="town">H</kbd> Town Center</span
+        ><span><kbd data-shortcut="idle">.</kbd> Idle villager</span
+        ><span><kbd data-shortcut="grid">G</kbd> Tile grid</span
+        ><span><kbd data-shortcut="pause">Space</kbd> Pause</span>
+      </div>
+      <button id="guide-controls">CONFIGURE KEYBOARD & CAMERA</button>
+      <p class="guide-note">
+        LAN: run the server on one computer, open its LAN address on both
+        computers, choose Host &amp; Play and Join as Player. Both players use
+        the same authoritative C++ simulation.
+      </p>
+    </dialog>
+    <dialog id="delete-confirm" aria-labelledby="delete-title">
+      <h2 id="delete-title">Raze selected buildings?</h2>
+      <p id="delete-warning"></p>
+      <p id="delete-stage">Confirmation 1 of 2</p>
+      <button id="cancel-delete">CANCEL</button
+      ><button id="confirm-delete" class="danger">
+        CONTINUE TO FINAL CONFIRMATION
+      </button>
+    </dialog>
+    <dialog id="escape-menu" aria-labelledby="escape-title">
+      <button
+        id="close-escape"
+        class="close"
+        aria-label="Close settings and game menu"
+      >
+        ×
+      </button>
+      <div class="eyebrow">THE WAR COUNCIL</div>
+      <h2 id="escape-title">Game menu</h2>
+      <p id="menu-match-info"></p>
+      <p>Opening this menu does not pause a LAN match.</p>
+      <div class="menu-buttons">
+        <button id="menu-resume" class="primary">RESUME GAME</button
+        ><button id="menu-controls">KEYBOARD & CAMERA</button
+        ><button id="menu-info">RULES & GAME INFO</button>
+      </div>
+      <fieldset class="graphics-settings">
+        <legend>Graphics & frame rate</legend>
+        <label
+          >Rendering preset<select id="render-preset">
+            <option value="balanced">
+              Balanced · 60 FPS / up to 1.5× pixels
+            </option>
+            <option value="legacy">
+              Legacy dual-core · 30 FPS / 1× pixels
+            </option>
+            <option value="display">
+              High quality · 200 FPS / up to 2× pixels
+            </option>
+          </select></label
+        >
+        <label
+          >Frame-rate limit<select id="render-limit">
+            <option value="30">30 FPS · save power</option>
+            <option value="60" selected>60 FPS · default</option>
+            <option value="90">90 FPS</option>
+            <option value="120">120 FPS</option>
+            <option value="144">144 FPS</option>
+            <option value="165">165 FPS</option>
+            <option value="200">200 FPS</option>
+            <option value="custom">Custom FPS…</option>
+          </select></label
+        >
+        <label id="custom-fps-field" hidden
+          >Custom frame-rate limit
+          <input
+            id="custom-fps"
+            type="number"
+            min="1"
+            max="1000"
+            step="1"
+            value="60"
+            required
+            inputmode="numeric"
+            aria-describedby="fps-error"
+          />
+        </label>
+        <p id="fps-error" role="alert" hidden></p>
+        <p id="fps-summary" role="status">Frame-rate limit: 60 FPS.</p>
+        <p class="guide-note">
+          Presets go up to 200 FPS. Custom accepts 1–1000 FPS. This is a
+          rendering limit; your display refresh rate and hardware determine the
+          achieved FPS. Simulation and LAN tick rates stay the same.
+        </p>
+      </fieldset>
+      <h3>Sound settings</h3>
+      <label><input type="checkbox" id="menu-audio" /> Enable sound</label>
+      <label
+        >Master volume
+        <input id="master-volume" type="range" min="0" max="100" value="60"
+      /></label>
+      <label
+        >Music
+        <input id="music-volume" type="range" min="0" max="100" value="22"
+      /></label>
+      <label
+        >Effects
+        <input id="effects-volume" type="range" min="0" max="100" value="32"
+      /></label>
+      <label class="debug-setting"
+        ><input id="menu-debug" type="checkbox" /> Performance overlay (FPS,
+        ping, traffic)</label
+      >
+      <p class="guide-note">
+        Camera movement stays on this device. No camera position is sent to the
+        server.
+      </p>
+      <label
+        ><input id="camera-boxes" type="checkbox" /> Show local camera guide
+        boxes</label
+      >
+
+      <button id="menu-host">OPEN HOST DIAGNOSTICS ↗</button>
+      <p class="guide-note">
+        For best performance, enable graphics acceleration in your browser's
+        system settings. FPS also depends on your display and hardware.
+      </p>
+      <div class="menu-exit-buttons">
+        <button id="menu-surrender" class="danger">SURRENDER</button>
+      </div>
+      <div id="surrender-confirm" class="hidden">
+        <p id="surrender-warning"></p>
+        <button id="confirm-surrender" class="danger">CONFIRM & EXIT</button
+        ><button id="cancel-surrender">CANCEL</button>
+      </div>
+    </dialog>
+    <dialog id="controls-dialog" aria-labelledby="controls-title">
+      <button
+        id="close-controls"
+        class="close"
+        aria-label="Close keyboard settings"
+      >
+        ×
+      </button>
+      <div class="eyebrow">YOUR COMMANDS, YOUR WAY</div>
+      <h2 id="controls-title">Keyboard & camera</h2>
+      <p>
+        Shared by Windows, Linux and Web. Saved in this browser; export a
+        profile to use it elsewhere. Escape closes settings; in the game it
+        opens the menu. Ctrl+1–9 saves groups; 1–9 selects them.
+      </p>
+      <div class="camera-settings">
+        <label for="pan-speed"
+          >Pan speed <span id="pan-speed-value">550</span></label
+        >
+        <input
+          id="pan-speed"
+          type="range"
+          min="100"
+          max="1000"
+          step="25"
+          value="550"
+        />
+        <label
+          ><input id="edge-pan" type="checkbox" checked /> Pan at screen
+          edges</label
+        >
+      </div>
+      <div id="binding-list"></div>
+      <p id="controls-status" role="status"></p>
+      <div class="controls-footer">
+        <button id="reset-controls">RESET DEFAULTS</button
+        ><button id="export-controls">EXPORT PROFILE</button
+        ><button id="import-controls">IMPORT PROFILE</button>
+      </div>
+      <input
+        id="controls-import-file"
+        type="file"
+        accept="application/json,.json"
+        class="hidden"
+      />
+    </dialog>
+    <div id="end-screen" class="hidden">
+      <div class="eyebrow">THE CHRONICLE IS WRITTEN</div>
+      <h2 id="end-title">Victory</h2>
+      <p id="end-text"></p>
+      <button id="restart" class="primary">BEGIN AGAIN →</button>
+    </div>
+
+    <dialog id="mod-workshop">
+      <button id="close-workshop" class="close" aria-label="Close workshop">
+        ×
+      </button>
+      <div class="eyebrow">MAKE THIS WORLD YOUR OWN</div>
+      <h2>The workshop</h2>
+      <nav class="workshop-tabs">
+        <button data-tab="civ" class="active">CIVILIZATION DESIGNER</button
+        ><button data-tab="map">MAP FORGE</button
+        ><button data-tab="modguide">MODDER’S NOTES</button>
+      </nav>
+      <div id="workshop-message" role="status"></div>
+      <section id="tab-civ" class="workshop-tab">
+        <div class="editor-toolbar">
+          <label>Load a civilization<select id="civ-preset"></select></label
+          ><button id="new-civ">NEW CIVILIZATION</button
+          ><button id="duplicate-civ">DUPLICATE</button>
+        </div>
+        <div class="civ-layout">
+          <div>
+            <label class="editor-tip"
+              >Preview age
+              <select id="civ-preview-age">
+                <option value="1">Dark Age</option>
+                <option value="2">Feudal Age</option>
+                <option value="3">Castle Age</option>
+              </select></label
+            >
+            <canvas id="civ-preview" width="360" height="210"></canvas>
+            <h3 id="civ-preview-name">The Riverborn</h3>
+            <p id="civ-preview-description"></p>
+            <div class="editor-tip">
+              The race template controls architecture, appearance and available
+              troops. Your editable bonuses tune its economy and military. Team
+              insignia identify your kingdom.
+            </div>
+          </div>
+          <div class="civ-fields">
+            <div class="field-row">
+              <label>Name<input id="civ-name" maxlength="60" /></label
+              ><label
+                >Stable ID<input
+                  id="civ-id"
+                  maxlength="32"
+                  placeholder="my-civilization"
+              /></label>
+            </div>
+            <label>Race template<select id="civ-race"></select></label
+            ><button id="apply-race" type="button">
+              USE RACE STORY & BONUSES
+            </button>
+            <label
+              >Story<textarea
+                id="civ-description"
+                maxlength="400"
+                rows="2"
+              ></textarea>
+            </label>
+            <div class="resource-fields">
+              <label
+                >Food<input
+                  id="civ-food"
+                  type="number"
+                  min="0"
+                  max="5000" /></label
+              ><label
+                >Wood<input
+                  id="civ-wood"
+                  type="number"
+                  min="0"
+                  max="5000" /></label
+              ><label
+                >Gold<input
+                  id="civ-gold"
+                  type="number"
+                  min="0"
+                  max="5000" /></label
+              ><label
+                >Stone<input id="civ-stone" type="number" min="0" max="5000"
+              /></label>
+            </div>
+            <div id="civ-sliders"></div>
+            <p class="editor-tip">
+              1.00× is standard. Changes are applied to new matches, never
+              silently to an ongoing game.
+            </p>
+          </div>
+        </div>
+        <div class="editor-bottom">
+          <button class="primary" id="save-civ">SAVE CIVILIZATION</button
+          ><button id="export-civ">EXPORT JSON</button
+          ><button id="import-civ">IMPORT JSON</button>
+        </div>
+      </section>
+      <section id="tab-map" class="workshop-tab hidden">
+        <div class="editor-toolbar">
+          <label
+            >Load a custom map<select id="saved-map">
+              <option value="">New map</option>
+            </select></label
+          ><label
+            >Template<select id="map-template">
+              <option value="blank">Open meadow</option>
+              <option value="river">Riverlands</option>
+              <option value="lakes">Twin Lakes</option>
+            </select></label
+          ><button id="new-map">NEW MAP</button
+          ><button id="undo-map">↶ UNDO</button
+          ><button id="redo-map">↷ REDO</button>
+        </div>
+        <div class="map-editor-layout">
+          <aside class="map-brushes">
+            <h3>Terrain</h3>
+            <div id="terrain-brushes"></div>
+            <h3>Resources</h3>
+            <div id="resource-brushes"></div>
+            <h3>Player starts</h3>
+            <label>Start number<select id="start-index"></select></label
+            ><button id="spawn-brush">⚑ PLACE START</button
+            ><label class="check-label"
+              ><input id="editor-grid" type="checkbox" checked /> Show tile
+              grid</label
+            ><label
+              >Brush size<input
+                id="brush-size"
+                type="range"
+                min="1"
+                max="7"
+                value="1"
+              /><output id="brush-output">1 tile</output></label
+            ><label
+              >Zoom<input
+                id="editor-zoom"
+                type="range"
+                min="1"
+                max="6"
+                step=".1"
+                value="1"
+            /></label>
+          </aside>
+          <div>
+            <div id="editor-map-wrap">
+              <canvas
+                id="map-editor"
+                aria-label="Level designer canvas — paint tiles with left mouse, pan with middle mouse"
+              ></canvas>
+            </div>
+            <div id="map-inspector">Tile 0, 0 · Grass</div>
+          </div>
+          <aside class="map-properties">
+            <h3>Map properties</h3>
+            <label
+              >Name<input
+                id="custom-map-name"
+                value="Untitled meadow"
+                maxlength="60" /></label
+            ><label
+              >Stable ID<input
+                id="custom-map-id"
+                value="untitled-meadow"
+                maxlength="32"
+            /></label>
+            <div class="field-row">
+              <label
+                >Width<input
+                  id="editor-width"
+                  type="number"
+                  min="48"
+                  max="128"
+                  value="64" /></label
+              ><label
+                >Height<input
+                  id="editor-height"
+                  type="number"
+                  min="48"
+                  max="128"
+                  value="64"
+              /></label>
+            </div>
+            <label>Player starts<select id="spawn-count"></select></label
+            ><button id="resize-map">APPLY SIZE / STARTS</button
+            ><label class="check-label"
+              ><input id="auto-resources" type="checkbox" checked /> Automatic
+              resources at starts and across the map</label
+            >
+            <p class="editor-tip">
+              Starts reserve a dry 17 × 17 area for a fair settlement. Paint
+              bridges to connect land. The inner 3 × 3 outline is the Town
+              Center; resource painting keeps it clear.
+            </p>
+            <button id="validate-map">CHECK LAND ROUTES</button>
+            <div id="map-validation"></div>
+          </aside>
+        </div>
+        <div class="editor-bottom">
+          <button class="primary" id="save-map">SAVE MAP TO SERVER</button
+          ><button id="export-map">EXPORT JSON</button
+          ><button id="import-map">IMPORT JSON</button
+          ><span
+            >Left-drag paints · middle-drag pans · wheel zooms · undo restores a
+            stroke</span
+          >
+        </div>
+      </section>
+      <section id="tab-modguide" class="workshop-tab hidden">
+        <div class="guide-grid">
+          <article>
+            <h3>Start with data, not code</h3>
+            <p>
+              Create or duplicate a civilization. Set its name, story, starting
+              stockpile and multipliers. Save it, then choose it in the welcome
+              screen or your lobby row. The operator stores data in
+              <code>data/content.json</code>.
+            </p>
+          </article>
+          <article>
+            <h3>Design a battlefield</h3>
+            <p>
+              Choose dimensions and 2–16 starts. Paint land, water, bridges,
+              woodland and deposits. Check that all starts have land routes,
+              then save. The host can choose your map in the lobby.
+            </p>
+          </article>
+          <article>
+            <h3>Share a mod</h3>
+            <p>
+              Export JSON and send the file to the server operator. They import
+              it and save it on their server. Imported files are validated; they
+              do not execute scripts. A player can export a draft even without
+              permission to save on a live server.
+            </p>
+          </article>
+          <article>
+            <h3>Go beyond the editors</h3>
+            <p>
+              <code>games/crownfall/catalog.h</code> defines the roster and
+              costs. <code>games/crownfall/models.h</code> defines moddable
+              data. <code>games/crownfall/world.cpp</code> contains the rules.
+              <code>web/art.js</code> generates the single sprite image. Follow
+              <code>docs/MODDING.md</code> to add mechanics and artwork.
+            </p>
+          </article>
+        </div>
+        <p class="editor-tip">
+          Saving a mod does not change a match already in progress. Restart or
+          create a new match to apply it. Save and export important designs
+          before removing local data.
+        </p>
+      </section>
+      <input
+        type="file"
+        id="mod-import"
+        accept="application/json,.json"
+        class="hidden"
+      />
+    </dialog>
+    <script src="./engine-bootstrap.js"></script><script src="./art.js"></script>
+    <script src="./sound.js"></script>
+    <script src="./controls.js"></script>
+    <script src="./motion.js"></script>
+    <script src="./damage.js"></script>
+    <script src="./perf.js"></script>
+    <script src="./ground.js"></script>
+    <script src="./game.js"></script>
+    <script src="./workshop.js"></script>
+  </body>
+</html>

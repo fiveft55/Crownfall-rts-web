@@ -1,0 +1,11 @@
+Crownfall 0.5.Monarch native build
+Source revision: 149039dcc8d6026bdf7a57e56967e46696ec7064
+Compiler: Clang 19.1.7
+Build host: Linux
+Target: Emscripten x86
+C++ standard: 17
+
+Native executable + browser interface. See README.md, docs/INSTALL.md and
+docs/GAMEPLAY.md for installation, controls and validation scope. All platforms share the same
+engine, default settings, keyboard profiles, simulation rules and browser UI. The adjacent ZIP checksum is
+SHA-256; this metadata does not represent a code-signing certificate.
