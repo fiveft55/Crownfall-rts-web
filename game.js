@@ -294,13 +294,10 @@ function focus(x, y) {
 }
 // Menu presentation owns its framing; it never accepts gameplay camera input.
 function focusMenuSettlement() {
-  camera.zoom = 1.2;
+  // Town Center framing from commit 2fc6e69.
+  camera.zoom = 1.7;
   const home = state?.entities.find((e) => e.owner === 0 && e.kind === 4);
   focus(home?.x ?? 16, home?.y ?? 35);
-  // Move the previous preview three tiles left and two tiles up.
-  // Net framing from the Town Center: two projected tiles left and one up.
-  camera.x -= 128;
-  camera.y -= 32;
 }
 function cameraDebugView() {
   if (!state || needsFocus || state.waiting) return {};
