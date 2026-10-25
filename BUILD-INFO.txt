@@ -1,12 +1,6 @@
-Crownfall 0.5.Monarch native build
-Source revision: 6532c258620638c94cbd0531b70cd4c36c83167b
-Compiler: Clang 19.1.7
-Build host: Linux
-Target: Emscripten x86
+On'Gate: Legacy 0.6.SilkRoad WebAssembly build
+Source revision: 1900f9d978e8712fa8f510a359b6e2e342d83826
+Compiler: Emscripten 3.1.69 / LLVM 19
+Target: WebAssembly / static browser
 C++ standard: 17
-
-Native executable + browser interface. See README.md, docs/INSTALL.md and
-docs/GAMEPLAY.md for installation, controls and validation scope. All platforms share the same
-engine, default settings, keyboard profiles, simulation rules and browser UI. The adjacent ZIP checksum is
-SHA-256; this metadata does not represent a code-signing certificate.
-Presentation-only repack; native/WebAssembly runtime bytes unchanged from 149039d.
+Wasm SHA-256: 89060fe77914c38e842d678764a6d62cad04890cd17e729dcda99b54d6b07f64

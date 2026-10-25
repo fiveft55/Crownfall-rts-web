@@ -1,0 +1,21 @@
+{
+  "scenario": "1000 changing poses, 20 polls/sec, ten seconds, no transport headers",
+  "cases": [
+    {
+      "viewer": "player-500-owned",
+      "completeDeltaBytes": 56238175,
+      "cameraDeltaBytes": 30462343,
+      "byteReductionPercent": 45.8333,
+      "completeMeanSerializeMs": 2.34845,
+      "cameraMeanSerializeMs": 1.33187
+    },
+    {
+      "viewer": "spectator",
+      "completeDeltaBytes": 55183575,
+      "cameraDeltaBytes": 5133961,
+      "byteReductionPercent": 90.6966,
+      "completeMeanSerializeMs": 2.11563,
+      "cameraMeanSerializeMs": 0.240888
+    }
+  ]
+}

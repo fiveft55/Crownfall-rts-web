@@ -8,7 +8,7 @@
     BUILDING_HEIGHT = 192,
     BUILDING_COLUMNS = 32,
     BUILDING_BASE_Y = 128;
-  const buildingKinds = [4, 5, 6, 7, 8, 9, 10, 15, 16, 17, 18];
+  const buildingKinds = [4, 5, 6, 7, 8, 9, 10, 15, 16, 17, 18, 41];
   const raceTemplates = [
     {
       id: "imperials",
@@ -81,13 +81,16 @@
       units: [0, 24, 25, 26, 28, 38],
     },
   ];
-  for (const race of raceTemplates)
-    if (race.units.includes(19)) race.units.push(40);
+  for (const race of raceTemplates) if (race.units.includes(19)) {
+    if (!race.units.includes(40)) race.units.push(40);
+    if (!race.units.includes(20)) race.units.push(20);
+  }
+  const BUILDING_SLOTS = buildingKinds.length + 3;
   const UNIT_SIZE = 64,
     UNIT_ROW_HEIGHT = 48,
     UNIT_COLUMNS = 64,
     BUILDING_ROWS = Math.ceil(
-      (buildingKinds.length * 10 * 3) / BUILDING_COLUMNS,
+      (BUILDING_SLOTS * 10 * 3) / BUILDING_COLUMNS,
     ),
     UNIT_BASE_Y = BUILDING_BASE_Y + BUILDING_ROWS * BUILDING_HEIGHT;
   // Omit ages where a class cannot exist; spend the saved cells on clearer 64px poses.
@@ -96,7 +99,7 @@
       ? 1
       : kind === 40
         ? 2
-        : kind === 3 || kind >= 30
+        : kind === 3 || kind === 20 || kind >= 30
           ? 3
           : 2;
   const unitOffsets = Array.from({ length: 3 }, () => []);
@@ -1118,7 +1121,116 @@
       line(32, 84, 90, 104, "#aab094", 3);
     }
   }
-  function raceBuilding(kind, race, age) {
+  // Generated once into PNG. Runtime only selects an atlas frame.
+  function raceBuilding(kind, race, age, facing = 0) {
+    if (kind === 41) {
+      const alongY = facing % 2;
+      const ends = alongY ? [[96,76],[32,108]] : [[32,76],[96,108]];
+      for (const [x,y] of ends) block(x,y,11,7,56,"#919786");
+      poly([[ends[0][0]-6,ends[0][1]-54],[ends[1][0]-6,ends[1][1]-54],
+        [ends[1][0]+6,ends[1][1]-45],[ends[0][0]+6,ends[0][1]-45]],"#716449");
+      for (let t=.2;t<.9;t+=.2) {
+        const x=ends[0][0]+(ends[1][0]-ends[0][0])*t,
+          y=ends[0][1]+(ends[1][1]-ends[0][1])*t;
+        line(x,y-48,x,y-8,"#594e3d",3);
+      }
+      line(ends[0][0],ends[0][1]-28,ends[1][0],ends[1][1]-28,"#383e34",3);
+      if (facing>=2) line(ends[0][0],ends[0][1]-8,ends[1][0],ends[1][1]-48,"#c1a76c",2);
+      return;
+    }
+    if (kind === 17) {
+      block(64,96,62,31,62,"#929987");
+      for (const [x,y] of [[20,75],[43,64],[66,53],[89,65],[111,76]]) block(x,y,6,4,10,"#aab09d");
+      return;
+    }
+    if (kind===9) { legacyRaceBuilding(9,0,age); return; }
+    if (window.CrownArtTheme === "legacy" || race===0 || kind===10) {
+      legacyRaceBuilding(kind,race,age); return;
+    }
+    const roof=raceTemplates[race].roof, stone=age===3?"#a5a38f":"#8e8064";
+    const hall=kind===4||kind===18, height=kind===16?43:kind===6?29:34;
+    ctx.save();
+    const growth=age===1?.84:age===2?.94:1;
+    ctx.translate(64,100);ctx.scale(1,growth);ctx.translate(-64,-100);
+    if(kind===4 && ![3,5,8,9].includes(race)) {
+      for(const [x,y]of [[23,97],[105,97]]){
+        block(x,y,18,11,25,race===7?stone:"#887353");
+        poly([[x-22,y-26],[x,y-41],[x+22,y-26],[x,y-11]],roof);
+        rect(x+2,y-12,7,10,"#384638");line(x+5,y-12,x+5,y-2,"#c4b58b",1);
+      }
+    }
+    if (race===1) {
+      block(64,93,43,23,height,"#876346");
+      poly([[16,62],[57,23],[111,57],[73,87]],"#5a6056");
+      poly([[16,62],[73,87],[73,97],[16,72]],"#a58156");
+      line(18,57,7,41,"#d7caa5",5);line(110,56,120,40,"#d7caa5",5);
+      for(let i=0;i<5;i++)line(37+i*12,61,37+i*12,91,"#4f402e",2);
+      for(let i=1;i<6;i++)line(57+i*8,23+i*5.6,16+i*9,62+i*4.7,"#81816a",1);
+      poly([[62,86],[73,80],[83,86],[83,110],[62,100]],"#393e31");
+      line(61,84,74,76,"#c0a674",3);line(74,76,85,84,"#c0a674",3);
+    } else if(race===2) {
+      block(62,95,40,21,height,"#8b7957");
+      poly([[15,63],[62,34],[110,69],[70,81],[54,70],[39,78]],"#807359");
+      poly([[62,34],[89,46],[76,72],[54,70]],"#775743");
+      line(22,70,27,98,"#403c31",3);line(102,68,97,102,"#403c31",3);
+      poly([[36,71],[58,77],[58,85],[48,82],[39,88]],"#b29b6c");
+    } else if(race===3) {
+      block(64,98,40,23,22,"#5b6250");
+      poly([[15,82],[31,55],[61,25],[99,55],[113,86],[65,111]],"#78654c");
+      line(30,69,61,30,"#483f32",3);line(98,68,61,30,"#483f32",3);
+      poly([[49,100],[47,74],[61,63],[74,81],[78,112]],"#303d30");
+      line(22,95,18,54,"#d4c6a0",5);line(104,96,111,51,"#d4c6a0",5);
+    } else if(race===4) {
+      for(const x of [26,48,82,102])line(x,72,x-4,116,"#514d34",5);
+      block(64,79,40,22,25,"#7e7351");
+      poly([[12,62],[53,20],[108,58],[84,69],[66,60],[40,73]],"#66704e");
+      rect(33,61,14,19,"#344329");rect(35,64,8,12,"#d6b058");
+      line(85,48,96,15,"#4b4b34",4);
+    } else if(race===5) {
+      block(64,98,39,22,height,"#c4c6b3");
+      for(const x of [27,99]) {block(x,83,9,6,44,"#c9cbb8");poly([[x-13,40],[x,12],[x+13,40]],"#788a84");}
+      poly([[22,64],[64,21],[106,64],[64,85]],"#6b857b");
+      poly([[51,108],[51,79],[64,62],[77,79],[77,119]],"#385c58");
+      line(64,65,64,110,"#dbc79c",2);
+    } else if(race===6) {
+      block(64,97,40,23,height,"#b0986d");
+      poly([[15,62],[63,31],[112,64],[66,88]],"#748662");
+      poly([[15,62],[31,54],[28,70],[66,88],[98,73],[112,64],[110,76],[66,100],[18,77]],"#53684c");
+      for(const x of [25,98])line(x,73,x,103,"#74573c",4);
+      rect(60,83,16,23,"#3c4734");
+    } else if(race===7) {
+      block(64,99,43,24,height+9,"#909788");
+      poly([[16,59],[64,28],[112,59],[112,72],[64,94],[16,72]],"#7b826d");
+      for(let i=0;i<5;i++)line(25+i*17,58,25+i*17,77,"#b5b59d",2);
+      block(93,61,9,6,40,"#926749");
+      line(22,79,43,90,"#b38b57",5);line(43,90,43,111,"#b38b57",5);
+      rect(61,86,21,23,"#323e36");
+    } else if(race===8) {
+      poly([[10,96],[15,67],[42,39],[77,35],[109,63],[117,96],[68,125]],"#6b8050");
+      poly([[20,99],[27,71],[63,55],[99,77],[103,105],[66,123]],"#a09365");
+      block(64,109,15,8,25,"#73543b");
+      poly([[48,103],[49,85],[60,78],[74,84],[80,109],[64,117]],"#4b6040");
+      line(62,84,65,112,"#bfa96b",2);
+      for(const x of [22,100]) {rect(x,88,10,10,"#ddc786");line(x+5,87,x+5,98,"#5c6041",1);}
+    } else {
+      block(64,99,39,23,height,"#636373");
+      for(const [x,y] of [[27,77],[99,77],[64,91]]) {
+        block(x,y,7,5,59,"#898b87");poly([[x-10,y-57],[x,y-83],[x+10,y-57]],"#52435f");
+      }
+      poly([[50,109],[50,78],[65,61],[80,79],[80,121]],"#2c3036");
+      for(let i=0;i<4;i++)line(52+i*9,78,52+i*9,103,"#b4b59f",2);
+    }
+    // Production silhouettes reflect their role, not a floating identifying icon.
+    if(kind===6){for(const x of [31,42,86]){line(x,99,x+8,68,"#ddd1ac",3);line(x-4,83,x+9,87,"#5c4935",3);}}
+    if(kind===7){line(28,105,35,72,"#75583e",4);line(35,72,48,101,"#75583e",4);line(26,88,48,88,"#d6cfa4",2);}
+    if(kind===8){block(29,101,20,10,18,"#65543e");line(25,86,25,114,"#9c8056",3);line(40,90,40,119,"#9c8056",3);}
+    if(kind===15){block(88,82,9,6,56,stone);block(40,107,14,8,10,"#414b45");rect(32,93,17,4,"#b7bca9");}
+    if(kind===16){poly([[46,68],[64,43],[82,68]],roof);rect(51,68,23,15,"#d6cda7");line(62,68,62,83,"#65593e",2);}
+    if(kind===18){for(const [x,y]of [[17,91],[109,91]])block(x,y,10,7,hall?56:40,stone);}
+    if([2,4].includes(race)){poly([[63,94],[78,101],[78,119],[63,111]],"#3f4334");line(62,91,80,99,"#c4ae7f",3);}
+    ctx.restore();
+  }
+  function legacyRaceBuilding(kind, race, age) {
     if (kind === 5 && race >= 3) {
       raceHouse(race, age);
       return;
@@ -1535,14 +1647,19 @@
       line(29, head + 8, 34, head + 8, "#533b2b", 1.5);
       line(31, head + 15, 34, head + 15, gold, 1.5);
     }
-    const handY =
-        torso + 8 + (attack || work ? swing * 4 : walk ? stride * 0.4 : 0),
-      handX = 40 + (attack || work ? swing * 5 : 0);
+    const silkAttack = attack && window.CrownArtTheme !== "legacy";
+    // Wind-up, quick contact and slower recovery. Arms follow the working hand;
+    // the weapon rotates through the strike instead of translating a rigid sprite.
+    const contact = phase < .3 ? -phase/.3 : phase < .5 ? -1+(phase-.3)*10 : 1-(phase-.5)*2;
+    const handY = torso + 8 + (silkAttack ? (bow ? -2 : -5+contact*5) : attack || work ? swing*4 : walk ? stride*.4 : 0),
+      handX = 40 + (silkAttack ? (bow ? -contact*4 : contact*7) : attack || work ? swing*5 : 0);
     line(25, torso + 2, 21, torso + 8, skin, 3);
     line(21, torso + 8, 23, base - 1, skin, 2.5);
     line(36, torso + 2, 40, torso + 6, skin, 3);
     line(40, torso + 6, handX, handY, skin, 2.5);
     if (female || armored) line(40, torso + 6, handX, handY, "#6a5949", 2);
+    ctx.save();
+    if(silkAttack && !bow){ctx.translate(handX,handY);ctx.rotate([1,34].includes(actual) ? -.65-contact*.65 : contact*.95);ctx.translate(-handX,-handY);}
     // Workers carry nothing at rest or on the way to a job. Tools appear at contact.
     if (actual === 0) {
       if (work || attack) {
@@ -1622,6 +1739,7 @@
         line(22, torso + 4, 22, base, gold, 1);
       }
     }
+    ctx.restore();
     if (actual === 33) {
       line(26, head, 36, head, gold, 1);
       rect(30, head - 2, 2, 2, "#eee6bd");
@@ -1754,8 +1872,8 @@
     resource(13, () => deposit(false));
     for (let age = 1; age <= 3; age++)
       for (let race = 0; race < raceTemplates.length; race++) {
-        for (let slot = 0; slot < buildingKinds.length; slot++) {
-          const index = ((age - 1) * 10 + race) * buildingKinds.length + slot;
+        for (let slot = 0; slot < BUILDING_SLOTS; slot++) {
+          const index = ((age - 1) * 10 + race) * BUILDING_SLOTS + slot;
           ctx.save();
           ctx.translate(
             (index % BUILDING_COLUMNS) * BUILDING_SIZE,
@@ -1775,7 +1893,7 @@
           ctx.lineTo(1, 100);
           ctx.closePath();
           ctx.clip();
-          if (buildingKinds[slot] !== 10) {
+          if (buildingKinds[slot] !== 10 && slot < buildingKinds.length-1) {
             poly(
               [
                 [8, 100],
@@ -1791,7 +1909,7 @@
           }
           const original = palettes[race];
           palettes[race] = dye;
-          raceBuilding(buildingKinds[slot], race, age);
+          raceBuilding(buildingKinds[slot] ?? 41, race, age, slot >= buildingKinds.length-1 ? slot-(buildingKinds.length-1) : 0);
           palettes[race] = original;
           ctx.restore();
         }
@@ -2002,6 +2120,7 @@
     teamNames,
     palettes,
     generate,
+    clearCaches() { factionFrames.clear(); factionBytes=0; this.iconBounds?.clear(); },
     CELL,
     COLS,
     minUnitAge,
@@ -2130,11 +2249,11 @@
       };
     },
     buildingFrame(entity) {
-      const slot = buildingKinds.indexOf(entity.kind),
+      const slot = buildingKinds.indexOf(entity.kind) + (entity.kind===41 ? (entity.facing||0) : 0),
         age = Math.max(1, Math.min(3, entity.age || 1)),
         race = Math.max(0, Math.min(9, entity.race || 0));
       const index =
-        ((age - 1) * 10 + race) * buildingKinds.length + Math.max(0, slot);
+        ((age - 1) * 10 + race) * BUILDING_SLOTS + Math.max(0, slot);
       return {
         x: (index % BUILDING_COLUMNS) * BUILDING_SIZE,
         y:
@@ -2156,6 +2275,7 @@
             : 1;
     },
     clipTile(context, entity, x, y, zoom) {
+      if(entity.kind===41){context.beginPath();context.rect(x-100*zoom,y-160*zoom,200*zoom,200*zoom);context.clip();return;}
       const n = this.footprint(entity.kind),
         rx = n * 32 * zoom,
         ry = n * 16 * zoom;
@@ -2284,7 +2404,7 @@
     },
     buildingFlag(context, entity, x, y, zoom, seconds) {
       if (
-        !buildingKinds.includes(entity.kind) ||
+        !buildingKinds.includes(entity.kind) || entity.kind === 17 ||
         entity.progress < 1 ||
         entity.owner < 0
       )

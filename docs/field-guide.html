@@ -1,0 +1,953 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>On'Gate: Legacy · Illustrated field guide</title><style>
+:root{color-scheme:light;--ink:#183b34;--gold:#91631d;--paper:#fffdf7;--line:#d3dac9}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:#eef0e7;color:var(--ink);font:16px/1.65 system-ui,Arial,sans-serif}
+a{color:#216851;text-underline-offset:3px}a:hover{color:var(--gold)}header{background:#17382f;color:#f9f2d4;padding:32px max(24px,calc((100vw - 1250px)/2));border-bottom:5px solid #cfb678}
+header p{margin:4px 0}header strong{font:32px Georgia,serif;letter-spacing:2px}header a{color:#f2dfad;margin-right:22px}header small{display:block;color:#c4d3c3;margin-bottom:16px}
+.layout{display:grid;grid-template-columns:250px minmax(0,960px);gap:34px;max-width:1300px;margin:28px auto;padding:0 24px 60px}aside{font-size:13px;position:sticky;top:20px;max-height:94vh;overflow:auto;align-self:start;padding-right:8px}aside>strong{letter-spacing:2px;color:var(--gold)}aside ul{list-style:none;padding-left:12px}aside>div>ul{padding:0}aside li{margin:8px 0}aside a{text-decoration:none}aside ul ul ul{display:none}
+article{background:var(--paper);border:1px solid var(--line);padding:38px;min-width:0;border-radius:4px}h1,h2,h3{font-family:Georgia,serif;line-height:1.22;color:#193e32;scroll-margin-top:24px}h1{font-size:38px;margin:0 0 24px}h2{font-size:29px;margin:48px 0 20px;border-top:2px solid #d7c593;padding-top:24px}h3{font-size:22px;margin-top:30px}p,ul,ol{margin:16px 0}li{padding-left:3px;margin:7px 0}img{display:block;max-width:100%;height:auto;margin:24px auto;border:1px solid var(--line)}table{border-collapse:collapse;width:100%;font-size:14px;margin:22px 0;display:block;overflow-x:auto}th,td{border:1px solid var(--line);padding:11px 13px;text-align:left;vertical-align:top}th{background:#e6eddf;line-height:1.3}tr:nth-child(even){background:#f2f4eb}pre{background:#edf1e8;border-left:4px solid #b29655;padding:20px;overflow:auto;font:13px/1.6 monospace}code{font-size:.88em;overflow-wrap:anywhere}footer{margin:38px 0 0;font-size:13px;color:#587065}.print-cover{display:none}.technology-print{display:none}
+@media(max-width:900px){.layout{display:block;padding:0 12px 30px;margin-top:15px}aside{position:static;max-height:280px;margin-bottom:20px;border:1px solid var(--line);padding:14px}article{padding:22px}header{padding:24px}h1{font-size:30px}h2{font-size:25px}}
+@media print{ @page{size:A4;margin:18mm 14mm 19mm}body{background:white;font:10pt/1.42 Arial,sans-serif}header,aside,footer,.screen-only{display:none}.layout{display:block;margin:0;padding:0;max-width:none}article{border:0;border-radius:0;padding:0}h1{font-size:25pt}h2{font-size:18pt;margin-top:24pt;padding-top:12pt;break-after:avoid}h3{font-size:13pt;break-after:avoid}p,ul,ol{margin:9pt 0}li{margin:3pt 0}table{display:table;overflow:visible;font-size:8.5pt;margin:12pt 0;table-layout:auto}th,td{padding:6pt;overflow-wrap:anywhere}tr{break-inside:avoid}thead{display:table-header-group}img{max-width:100%;max-height:210mm;object-fit:contain;break-inside:avoid;margin:12pt auto}pre{font-size:8pt;white-space:pre-wrap}a{color:#173b34;text-decoration:none}.technology-print{display:block;break-before:page}.print-cover{display:block;break-after:page;padding-top:35mm}.print-cover h1{font:38pt Georgia,serif}.print-cover p{font-size:16pt;margin-top:24pt}.print-cover img{max-height:115mm} }
+</style></head><body><header><strong>ON'GATE: LEGACY</strong><small>0.6.SilkRoad · A practical handbook · 26 October 2026</small><nav aria-label="Handbook"><a href="field-guide.html">Play &amp; create</a><a href="technology.html">Technology &amp; core</a><a href="OnGate-Legacy-Handbook.pdf">Download PDF</a></nav></header><div class="layout"><aside aria-label="Contents"><strong>IN THIS GUIDE</strong><div class="toc">
+<ul>
+<li><a href="#ongate-legacy-field-guide-06silkroad">On'Gate: Legacy field guide · 0.6.SilkRoad</a><ul>
+<li><a href="#1-start-your-first-kingdom">1. Start your first kingdom</a><ul>
+<li><a href="#a-useful-opening-not-a-compulsory-build-order">A useful opening, not a compulsory build order</a></li>
+</ul>
+</li>
+<li><a href="#2-read-the-screen">2. Read the screen</a></li>
+<li><a href="#3-select-and-command">3. Select and command</a><ul>
+<li><a href="#your-essential-keyboard-card">Your essential keyboard card</a></li>
+</ul>
+</li>
+<li><a href="#4-grow-your-settlement">4. Grow your settlement</a><ul>
+<li><a href="#buildings-have-different-jobs">Buildings have different jobs</a></li>
+<li><a href="#ages-and-research-are-separate-decisions">Ages and research are separate decisions</a></li>
+<li><a href="#damage-repair-and-defeat">Damage, repair and defeat</a></li>
+</ul>
+</li>
+<li><a href="#5-choose-your-people">5. Choose your people</a></li>
+<li><a href="#6-play-with-friends-or-watch-ai">6. Play with friends or watch AI</a><ul>
+<li><a href="#local-ai-game">Local AI game</a></li>
+<li><a href="#same-wi-fi-or-ethernet">Same Wi-Fi or Ethernet</a></li>
+</ul>
+</li>
+<li><a href="#7-make-a-map-or-civilization">7. Make a map or civilization</a></li>
+<li><a href="#8-make-changes-without-breaking-the-core">8. Make changes without breaking the core</a></li>
+<li><a href="#9-when-something-looks-wrong">9. When something looks wrong</a></li>
+<li><a href="#10-movement-recovery-and-victory-reveal">10. Movement recovery and victory reveal</a></li>
+<li><a href="#further-reading">Further reading</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</aside><article><section class="print-cover"><h1>ON'GATE: LEGACY</h1><p>0.6.SilkRoad / Illustrated player &amp; technology handbook</p><img src="images/guide-menu.png" alt="The current On'Gate: Legacy main menu"/><p>Play · Build · Host · Create<br/>26 October 2026</p></section><h1 id="ongate-legacy-field-guide-06silkroad">On'Gate: Legacy field guide · 0.6.SilkRoad</h1>
+<p>A practical handbook for your first kingdom, a LAN evening with friends, and your first mod. Screenshots show the current game; diagrams explain the rules rather than promise an exact battle outcome. Updated <strong>24 October 2026</strong>.</p>
+<p><strong>Other formats:</strong> <a href="field-guide.html">Offline HTML handbook</a> · <a href="OnGate-Legacy-Handbook.pdf">Printable handbook with technology appendix (PDF)</a>.</p>
+<p><strong>Choose your route:</strong> <a href="#1-start-your-first-kingdom">Play your first match</a> · <a href="#2-read-the-screen">Learn the screen</a> · <a href="#3-select-and-command">Orders and shortcuts</a> · <a href="#4-grow-your-settlement">Build and research</a> · <a href="#5-choose-your-people">Choose a people</a> · <a href="#6-play-with-friends-or-watch-ai">Host with friends</a> · <a href="#7-make-a-map-or-civilization">Create content</a> · <a href="technology.html">Understand the technology</a>.</p>
+<p><strong>New in this build:</strong> <a href="https://github.com/fiveft55/codex-rts-gametest/blob/main/docs/SILKROAD.md">SilkRoad construction, art, browser rooms and limits</a>. Town Centers cannot be razed; Castle builders can add Town Centers (+10 population each). Unfinished non-Town-Center foundations refund half their price when razed.</p>
+<h2 id="1-start-your-first-kingdom">1. Start your first kingdom</h2>
+<ol>
+<li>Download the <a href="https://github.com/fiveft55/codex-rts-gametest/blob/main/downloads/windows/OnGate-Legacy-Windows-x64.zip">Windows game ZIP</a>. Choose <strong>Extract All</strong>; keep the executable and all its neighboring folders together.</li>
+<li>Open <strong>Play OnGate Legacy.cmd</strong>. Leave its server window running while you play in the browser. If it asks you to extract the game, you are probably running the launcher inside the ZIP.</li>
+<li>Enter your name, choose a faction and banner at the bottom of the menu, and pick <strong>Normal</strong> AI to begin. <strong>Random</strong> draws a civilization when the match starts, including saved custom civilizations.</li>
+<li>Choose <strong>Solo vs. AI</strong> for a quick match. Choose <strong>Skirmish Lobby</strong> to choose teams, multiple AI opponents, maps and AI difficulty before starting.</li>
+<li>Select a villager, then right-click berries or a tree. Select the Town Center and train villagers. Build a house before your population reaches its limit.</li>
+<li>Build a Barracks, gather an army and keep your final Town Center alive. A kingdom loses when its last Town Center is destroyed; the last surviving allied side wins.</li>
+</ol>
+<p>The Web build is a <strong>local AI demo</strong>. It runs the same C++ gameplay through WebAssembly, but does not provide native LAN hosting or joining. A static HTTP(S) host must serve its extracted files; opening its HTML directly from disk is not the supported launch path. <a href="https://github.com/fiveft55/codex-rts-gametest/blob/main/docs/INSTALL.md">Platform instructions</a>.</p>
+<h3 id="a-useful-opening-not-a-compulsory-build-order">A useful opening, not a compulsory build order</h3>
+<p>Keep villagers working; balance food for new people with wood for buildings. Scout before committing soldiers, avoid sending workers alone into hostile territory, and invest in age advancement only when you can still defend yourself. Different peoples favor different timings.</p>
+<h2 id="2-read-the-screen">2. Read the screen</h2>
+<p><img alt="Current main menu with left navigation, civilization preview, player settings and bottom match choices" src="images/guide-menu.png" /></p>
+<table>
+<thead>
+<tr>
+<th>Area</th>
+<th>What to use it for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Top left</td>
+<td>Game name and version. Check the version when comparing builds.</td>
+</tr>
+<tr>
+<td>Top right</td>
+<td>Player name and settings, including graphics, sound and key configuration.</td>
+</tr>
+<tr>
+<td>Left menu</td>
+<td>Solo, configurable Skirmish Lobby, Host &amp; Play, Join as Player and tools.</td>
+</tr>
+<tr>
+<td>Center settlement</td>
+<td>Live faction/banner preview. Its camera is locked at 1.7× on the Town Center.</td>
+</tr>
+<tr>
+<td>Bottom choices</td>
+<td>Civilization, banner, difficulty, map options and the faction's story.</td>
+</tr>
+</tbody>
+</table>
+<p>Fog covers unexplored preview terrain and all tiles outside the preview map. The menu camera does not pan. Entering a match restores normal camera control.</p>
+<p><img alt="Current battlefield showing top resource counters, selected villager, minimap and command ribbon" src="images/guide-battlefield.png" /></p>
+<table>
+<thead>
+<tr>
+<th>Battlefield area</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Top resource strip</td>
+<td>Your delivered food, wood, gold and stone; population used / supported.</td>
+</tr>
+<tr>
+<td>Main map</td>
+<td>Units, buildings, resource deposits, orders and visibility.</td>
+</tr>
+<tr>
+<td>Bottom minimap</td>
+<td>A small overview. Click it to move the camera.</td>
+</tr>
+<tr>
+<td>Selected-object panel</td>
+<td>Who is selected, health, production or research information.</td>
+</tr>
+<tr>
+<td>Command panel</td>
+<td>Orders for that selection. Villagers have Commands, Economy buildings and Military buildings tabs.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Visible terrain</strong> is currently in your team's sight. <strong>Explored terrain</strong> remembers the land without revealing current enemy movements. <strong>Unexplored terrain</strong> remains hidden. A target outline never gives you permission to see an enemy behind fog.</p>
+<h2 id="3-select-and-command">3. Select and command</h2>
+<p>Click a unit; drag a box to select several; use Shift-click to adjust a selection. Right-click is contextual:</p>
+<table>
+<thead>
+<tr>
+<th>With this selected</th>
+<th>Right-click this</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Villager</td>
+<td>Resource or its tile</td>
+<td>Gather and deliver supplies.</td>
+</tr>
+<tr>
+<td>Villager</td>
+<td>Unfinished friendly structure</td>
+<td>Help construct it.</td>
+</tr>
+<tr>
+<td>Villager</td>
+<td>Damaged completed friendly structure</td>
+<td>Repair, consuming resources.</td>
+</tr>
+<tr>
+<td>Soldier or villager</td>
+<td>Visible enemy</td>
+<td>Attack.</td>
+</tr>
+<tr>
+<td>Mobile units</td>
+<td>Ground</td>
+<td>Move there.</td>
+</tr>
+<tr>
+<td>Units</td>
+<td>Healthy eligible friendly garrison building</td>
+<td>Walk inside if capacity is available.</td>
+</tr>
+<tr>
+<td>Production/garrison building</td>
+<td>Ground or visible resource</td>
+<td>Set its rally flag; resource rallies can assign newly trained villagers.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Shift + right-click on ground</strong> appends waypoints. Numbered flags show the route; units find a reachable path between them. A normal new order replaces queued movement. Shift-placing buildings also queues construction jobs in the same bounded pool; gathering tasks are not queued. Each unit can have 16 pending waypoints; the whole match has a bounded shared pool.</p>
+<h3 id="your-essential-keyboard-card">Your essential keyboard card</h3>
+<p>These are the shipped defaults. A custom profile may differ.</p>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Arrow keys / middle-mouse drag</td>
+<td>Pan the battlefield. Edge panning is configurable.</td>
+</tr>
+<tr>
+<td>Mouse wheel</td>
+<td>Zoom toward the pointer: 1–2× for commanders, up to 4× for spectators.</td>
+</tr>
+<tr>
+<td>M / A / F</td>
+<td>Move / attack / attack-move destination.</td>
+</tr>
+<tr>
+<td>P / D / V / S</td>
+<td>Patrol / defend area / hold ground / stop.</td>
+</tr>
+<tr>
+<td>H / . / T</td>
+<td>Select Town Center / next idle villager / train first unlocked unit.</td>
+</tr>
+<tr>
+<td>R</td>
+<td>Choose a damaged friendly building to repair.</td>
+</tr>
+<tr>
+<td>Shift+H / Shift+B / Shift+F</td>
+<td>Place House / Barracks / Farm with selected villagers.</td>
+</tr>
+<tr>
+<td>Shift+K / Shift+U / Shift+C</td>
+<td>Place Blacksmith / School / Fortress. Age and cost rules still apply.</td>
+</tr>
+<tr>
+<td>G</td>
+<td>Toggle the precise tile grid.</td>
+</tr>
+<tr>
+<td>Ctrl+1…9 / 1…9</td>
+<td>Save / recall a control group.</td>
+</tr>
+<tr>
+<td>Space</td>
+<td>Host pause/resume. Opening the Escape menu alone does not pause a LAN match.</td>
+</tr>
+<tr>
+<td>Delete</td>
+<td>Delete selected units immediately; buildings require two confirmations.</td>
+</tr>
+<tr>
+<td>Escape</td>
+<td>Settings, rules, controls and confirmed Surrender.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Move</strong> travels without choosing fights along the way. <strong>Attack-move</strong> engages on its route. <strong>Patrol</strong> repeats a route. <strong>Defend</strong> fights near its starting area and returns after pursuit. <strong>Hold</strong> fights in range without chasing. <strong>Stop</strong> clears orders and queued movement; an idle soldier may still defend itself.</p>
+<p>Change bindings in <strong>Escape → Keyboard settings</strong>. Import/export transfers the keyboard/camera profile, not a saved army or match. Audio, graphics and other browser preferences are stored separately. <a href="https://github.com/fiveft55/codex-rts-gametest/blob/main/docs/GAMEPLAY.md">Full control rules</a>.</p>
+<h2 id="4-grow-your-settlement">4. Grow your settlement</h2>
+<p><img alt="Villager collection flows through Town Center delivery to stockpiles and investments" src="images/guide-economy.svg" /></p>
+<p>Resources in a villager's hands are not yet spendable. Keep routes to a <strong>completed friendly Town Center</strong> open. Natural deposits deplete; farms provide renewable food. There are no separate mills, lumber camps or trade markets in this roster.</p>
+<p><img alt="Top-down grid diagrams for 3 by 3, 2 by 2 and single-tile footprints" src="images/guide-footprints.svg" /></p>
+<ul>
+<li><strong>3×3, nine tiles:</strong> Town Center and Fortress.</li>
+<li><strong>2×2, four tiles:</strong> House, Farm, Barracks, Archery Range, Stable, Watchtower, Blacksmith and School.</li>
+<li><strong>1×1:</strong> Wall segments and natural resource nodes.</li>
+<li><strong>3×1 or 1×3:</strong> Gates; R rotates them during placement.</li>
+</ul>
+<p>Roofs, flags and tree canopies rise above their ground anchors. Their apparent height does not expand occupied ground. A blocked exit waits for space; it does not discard a paid unit.</p>
+<h3 id="buildings-have-different-jobs">Buildings have different jobs</h3>
+<table>
+<thead>
+<tr>
+<th>Building</th>
+<th>Main job</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Town Center</td>
+<td>Train villagers, accept deliveries, advance ages, defend and garrison.</td>
+</tr>
+<tr>
+<td>House</td>
+<td>Increase population support.</td>
+</tr>
+<tr>
+<td>Farm</td>
+<td>Renewable food worked by a villager.</td>
+</tr>
+<tr>
+<td>Barracks</td>
+<td>Infantry; Feudal <strong>Militia Drill</strong> for existing Footmen and future Militia recruits.</td>
+</tr>
+<tr>
+<td>Archery Range</td>
+<td>Ranged roster where the civilization permits one.</td>
+</tr>
+<tr>
+<td>Stable</td>
+<td>Scouts, knights or hog riders according to civilization and age.</td>
+</tr>
+<tr>
+<td>School</td>
+<td>Feudal+ Hand Tools and Wheelbarrow economic research.</td>
+</tr>
+<tr>
+<td>Blacksmith</td>
+<td>Forging and Armor for military units. Counts as Blacksmith in age requirements.</td>
+</tr>
+<tr>
+<td>Watchtower</td>
+<td>Defensive fire and a 10-unit shelter; it does not train troops.</td>
+</tr>
+<tr>
+<td>Fortress</td>
+<td>Castle Age champion production and a 20-unit garrison.</td>
+</tr>
+<tr>
+<td>Wall</td>
+<td>Drag a line of single-tile connected segments.</td>
+</tr>
+<tr>
+<td>Gate</td>
+<td>Three tiles; replaces your walls and allows allies through.</td>
+</tr>
+</tbody>
+</table>
+<p>Town Centers hold <strong>10 units</strong>. Select a shelter and use <strong>Deploy garrison</strong> to release its occupants toward the rally flag. <strong>Spawn inside</strong> on a Town Center keeps new villagers stored until deployed or until space is made. Units inside still count toward population.</p>
+<p>Town Centers attack at a base range of <strong>eight tiles</strong>. Living villagers and ranged units inside add one arrow each, up to <strong>seven total</strong>. Towers and Fortresses count ranged occupants for extra arrows; ordinary melee occupants do not add ranged shots. At 25% health occupants attempt emergency deployment; blocked exits retry.</p>
+<h3 id="ages-and-research-are-separate-decisions">Ages and research are separate decisions</h3>
+<p><img alt="Age diagram with required buildings and resource costs" src="images/guide-ages.svg" /></p>
+<table>
+<thead>
+<tr>
+<th>Transition</th>
+<th>Completed structures needed</th>
+<th>Price</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Dark → Feudal</td>
+<td>Your Barracks</td>
+<td>350 food + 100 gold</td>
+</tr>
+<tr>
+<td>Feudal → Castle</td>
+<td>Any two distinct types from School, Blacksmith, Archery Range</td>
+<td>650 food + 150 wood + 300 gold</td>
+</tr>
+</tbody>
+</table>
+<p>Click Advance to begin age research after meeting these gates, regardless of selection. Two Schools do not count as two different types. Peoples without a Range use School + Blacksmith. Training and research take simulated time; age changes do not instantly grant every upgrade.</p>
+<table>
+<thead>
+<tr>
+<th>Research</th>
+<th>Where</th>
+<th>Core effect when completed</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Hand Tools I / II</td>
+<td>School</td>
+<td>+20% villager gather rate per level.</td>
+</tr>
+<tr>
+<td>Wheelbarrow I / II</td>
+<td>School</td>
+<td>+12% villager movement speed per level.</td>
+</tr>
+<tr>
+<td>Forging I / II</td>
+<td>Blacksmith</td>
+<td>+2 soldier attack per level; does not upgrade civilian or building attacks.</td>
+</tr>
+<tr>
+<td>Armor I / II</td>
+<td>Blacksmith</td>
+<td>+1 soldier armor per level. Each hit still deals at least one damage.</td>
+</tr>
+<tr>
+<td>Swordsmanship</td>
+<td>Castle Barracks, after Militia Drill</td>
+<td>Existing Footmen/Militia and future recruits become Swordsmen; 150 food + 100 gold, 30 seconds.</td>
+</tr>
+<tr>
+<td>Militia Drill</td>
+<td>Idle Feudal Barracks</td>
+<td>Upgrade Footmen to Militia, including future recruits; 100 food + 50 gold, 20 simulated seconds.</td>
+</tr>
+</tbody>
+</table>
+<p>A building researches one technology at a time. Completed upgrades apply kingdom-wide and survive losing the research building. Destroying a building cancels its unfinished research without a refund. Age gates, second-level requirements, prices and civilization multipliers still apply. <a href="https://github.com/fiveft55/codex-rts-gametest/blob/main/docs/ECONOMY.md">Full research tables and repair accounting</a>.</p>
+<h3 id="damage-repair-and-defeat">Damage, repair and defeat</h3>
+<p>Repairs restore health using villagers and the original construction resource types. Restoring a full health bar costs half the building's original price; fractional charging is shared across workers. No supplies means repair waits.</p>
+<p>Buildings show smoke at 90–99% health, embers at 70–89%, fire at 49–69%, and broken/burnt sections below 49%. Cosmetic fire is a damage indicator; it does not secretly add damage. Dead units animate and retain their sight circle for at least five simulated seconds; then normal fog returns if nothing else reveals the area. Pause freezes simulated timers.</p>
+<p>Solo/local <strong>Surrender</strong> confirms and returns to the menu. In LAN, a defeated commander watches only the team's visibility and cannot command. If the owner explicitly leaves the council, that council closes for everyone. <a href="https://github.com/fiveft55/codex-rts-gametest/blob/main/docs/REALMS.md">Detailed surrender/host behavior</a>.</p>
+<h2 id="5-choose-your-people">5. Choose your people</h2>
+<p>The broken crown scattered an old realm into rival peoples. Their stories inform their bonuses and allowed units. Preview the banner and read <strong>Story &amp; traits</strong> before a match. These are broad play styles, not a guarantee of victory.</p>
+<table>
+<thead>
+<tr>
+<th>People</th>
+<th>Easy way to understand them</th>
+<th>Fortress champion</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Imperials</td>
+<td>Fast builders and producers; softer fighters.</td>
+<td>Paladin</td>
+</tr>
+<tr>
+<td>Highlanders</td>
+<td>Strong hill-clan melee; slower economy. No Range; thrown spears.</td>
+<td>Oxen Lord</td>
+</tr>
+<tr>
+<td>Rebels</td>
+<td>Adaptable mixed heritage and modest economy/movement bonuses.</td>
+<td>Assassin</td>
+</tr>
+<tr>
+<td>Orcs</td>
+<td>Durable, hard-hitting clans; slower workshops. Hog riders and thrown spears.</td>
+<td>Warlord</td>
+</tr>
+<tr>
+<td>Goblins</td>
+<td>Fast, productive and fragile; pointed ears and ambush-minded troops.</td>
+<td>Red Cap</td>
+</tr>
+<tr>
+<td>High Elves</td>
+<td>Strong, delicate bowkeepers; slower building/training.</td>
+<td>Queen's High Guard</td>
+</tr>
+<tr>
+<td>LongEars</td>
+<td>Fast borderland travelers and gatherers with human/elven heritage.</td>
+<td>Swordmaster</td>
+</tr>
+<tr>
+<td>Dwarves</td>
+<td>Tough, productive and slow; beards, crossbows and hog riders.</td>
+<td>Steam Walker</td>
+</tr>
+<tr>
+<td>Hobbits</td>
+<td>Strong gathering and lighter combat; small frontier folk.</td>
+<td>Duet Bard</td>
+</tr>
+<tr>
+<td>Chaos Legion</td>
+<td>Rapid recruitment, weaker gathering and undead troops.</td>
+<td>Dark Knight</td>
+</tr>
+</tbody>
+</table>
+<p>Queen's High Guards normally carry a bow and draw a sword in close combat. Warlords and Duet Bards support nearby allies. Not every faction has every standard troop. The current procedural art uses owner-colored clothing and animated flags; Goblins, Dwarves and Hobbits are smaller than the common humanoid scale. <a href="https://github.com/fiveft55/codex-rts-gametest/blob/main/docs/NEW_ERA.md">Stories, exact traits and legal military rosters</a>.</p>
+<h2 id="6-play-with-friends-or-watch-ai">6. Play with friends or watch AI</h2>
+<p><img alt="Skirmish lobby with kingdom rows, teams, civilization choices and AI controls" src="images/guide-lobby.png" /></p>
+<h3 id="local-ai-game">Local AI game</h3>
+<p>Open <strong>Skirmish Lobby</strong>, choose a map, capacity and teams, then add AI kingdoms and pick Easy / Normal / Hard / Expert for each. <strong>Watch AI vs AI</strong> is inside this lobby; it exchanges your playing seat for a spectator seat while retaining host ownership. It is not a separate main-menu mode.</p>
+<p>Fresh maps and councils default to <strong>64×64</strong> and <strong>two kingdoms</strong>. Hosting uses a single <strong>Map size</strong> dropdown: 64×64, 80×80, 96×96, 112×112 or <strong>Custom dimensions</strong>. Width/height fields appear only for Custom. Raise capacity deliberately; a map needs enough player starts. Teams are chosen before play and share vision, but not ownership or a combined resource wallet.</p>
+<h3 id="same-wi-fi-or-ethernet">Same Wi-Fi or Ethernet</h3>
+<ol>
+<li>On the Windows host, run <strong>Play OnGate Legacy.cmd</strong> and choose <strong>Host &amp; Play</strong>, or use <strong>OnGate Legacy Server.cmd</strong> for the separate Host Control window.</li>
+<li>Use <strong>server</strong> mode for other computers; <strong>localhost</strong> mode admits only this computer.</li>
+<li>Give friends the host's displayed LAN URL, including its port. They choose <strong>Join as Player</strong> in their browsers.</li>
+<li>Choose teams, civilizations and AI participants. Humans ready up; the owner starts the council once its conditions are met.</li>
+<li>Keep the server running. Explicit host departure closes the lobby; a guest's Leave releases only that guest's seat.</li>
+</ol>
+<p>Wi-Fi is sufficient. Optional UDP discovery helps find hosts; <strong>gameplay itself uses TCP/HTTP</strong>, not UDP or an Internet matchmaking service. Guest Wi-Fi/client isolation or a firewall can block devices on the same named network. Allow the game on the intended private network and use the correct address/port. <a href="https://github.com/fiveft55/codex-rts-gametest/blob/main/docs/HOSTING.md">Wi-Fi and hardware guide</a>.</p>
+<p><img alt="Roles diagram showing kingdoms, ordinary spectators and dedicated operator" src="images/guide-roles.svg" /></p>
+<p>A dedicated operator is separate from the 16 kingdoms and four spectator seats. <strong>Host &amp; Play</strong> instead puts the owner in a kingdom seat; a spectator owner can keep council authority while watching. A defeated commander stays in their kingdom seat with <strong>team-only vision</strong>, not full-map spectator privileges.</p>
+<p><img alt="Host console Tuning view with player and spectator rates" src="images/guide-host-tuning.png" /></p>
+<p>Both player and spectator snapshots default to <strong>20 Hz</strong>, a 50 ms interval. Existing explicitly saved host rates are preserved: choose 20 Hz for both under <strong>Tuning</strong> if updating an older server. Hosts may tune 5–60 Hz. The simulation is still 20 ticks per simulated second; the screen is 60 FPS by default. These three clocks have different jobs.</p>
+<p>Full spectators share a receive-only pushed stream; defeated commanders get private team-filtered state. TCP acknowledgements and connection/reconnection traffic still exist. Use Players to kick unwanted clients, Events to save action logs, and diagnostics for CPU/RAM, tick/serialization time and traffic. <a href="https://github.com/fiveft55/codex-rts-gametest/blob/main/docs/DIAGNOSTICS.md">Network and monitoring details</a>.</p>
+<h2 id="7-make-a-map-or-civilization">7. Make a map or civilization</h2>
+<p><img alt="Current Engine Studio with map, civilization, source, asset and export tools" src="images/guide-studio.png" /></p>
+<p>Download and extract the separate <a href="https://github.com/fiveft55/codex-rts-gametest/blob/main/downloads/windows/OnGate-Legacy-Engine-Windows-x64.zip">Windows Engine Studio ZIP</a>, then run <strong>CrownfallStudio.exe</strong>. Keep its <code>project/</code> directory alongside it. Studio owns a local authoring server; source editing is not exposed by an ordinary LAN game host.</p>
+<table>
+<thead>
+<tr>
+<th>I want to…</th>
+<th>Open this tool</th>
+<th>Save and verify this way</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Make a battlefield</td>
+<td>Map &amp; level designer</td>
+<td>Set a unique ID/name, 48–128 dimensions and 2–16 starts; paint terrain/resources, save and playtest.</td>
+</tr>
+<tr>
+<td>Make a people</td>
+<td>Civilization designer</td>
+<td>Set ID/name/story, resources and multipliers; save, then select it in the next playtest.</td>
+</tr>
+<tr>
+<td>Inspect animations</td>
+<td>Asset inspector</td>
+<td>Preview poses and export PNG/JSON sprite sheets.</td>
+</tr>
+<tr>
+<td>Change existing code</td>
+<td>Source editor</td>
+<td>Edit, save, and keep the backup. JS/JSON syntax checking is not a C++ compiler.</td>
+</tr>
+<tr>
+<td>Share a game</td>
+<td>Project &amp; export</td>
+<td>Choose Windows, Web or source; C++ changes need refreshed runtime templates.</td>
+</tr>
+</tbody>
+</table>
+<p>Start with a duplicate and a new ID. Place starts on walkable land with enough room for a 3×3 Town Center. Leave resource access and starting space for each side. Test each start, resource balance, routes, water crossings and a full intended lobby before sharing a map.</p>
+<p>Saved maps/civilizations live in <strong><code>data/content.json</code></strong>, not just the browser. Source edits are in <strong><code>project/</code></strong>. Export JSON and back up both before replacing a Studio installation. Running matches keep their configured content; new content is for the next configured playtest.</p>
+<p>The editor authors terrain, resources, starts and civilization data. Campaign triggers, a node-graph scripting engine and arbitrary prebuilt scenario armies are not implemented. New classes and rules require source work. <a href="https://github.com/fiveft55/codex-rts-gametest/blob/main/docs/STUDIO.md">Studio step-by-step</a> · <a href="https://github.com/fiveft55/codex-rts-gametest/blob/main/docs/MAP_EDITOR.md">Map Forge</a> · <a href="https://github.com/fiveft55/codex-rts-gametest/blob/main/docs/MODDING.md">Modding</a>.</p>
+<h2 id="8-make-changes-without-breaking-the-core">8. Make changes without breaking the core</h2>
+<p><img alt="Technology diagram separating input, C++ game rules, filtered state and presentation" src="images/guide-technology.svg" /></p>
+<p>Read <a href="technology.html">Technology and core structures</a> for the stack, memory model, simulation ownership and a change-to-rebuild matrix.</p>
+<ul>
+<li>Change a <strong>saved map or civilization</strong> first when data can express the idea.</li>
+<li>Change <strong>browser UI/animation</strong> for presentation. A new image cannot grant extra reach, health or building space.</li>
+<li>Change <strong>C++ rules</strong> for real costs, legal orders, collisions, research and visibility.</li>
+<li>Keep the server authoritative: check owner, visibility, resources and age in C++, not only by disabling a button.</li>
+<li>Preserve exact footprints, team fog, bounded queues, old stable IDs and release compatibility.</li>
+<li>Before editing, commit a recovery point. Use <a href="https://github.com/fiveft55/codex-rts-gametest/blob/main/docs/PROGRESS.md">the progress timeline</a> to find earlier milestones; open old builds in separate folders.</li>
+</ul>
+<p>This is a playable RTS foundation. It has no zero-memory simulation: units, maps and snapshots use bounded memory. The separate million-disc physics benchmark is not a promise of one million complete RTS units or a guaranteed frame rate on an old CPU. The current RTS capacity is 8,192 entity slots. <a href="https://github.com/fiveft55/codex-rts-gametest/blob/main/docs/PERFORMANCE.md">Measured limits</a>.</p>
+<h2 id="9-when-something-looks-wrong">9. When something looks wrong</h2>
+<table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>First useful check</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Launcher says “extract”</td>
+<td>Extract the entire ZIP, then run the launcher outside it.</td>
+</tr>
+<tr>
+<td>Friend cannot connect</td>
+<td>Server mode, host LAN URL/port, firewall and Wi-Fi client isolation.</td>
+</tr>
+<tr>
+<td>Cannot place a building</td>
+<td>Selected villager, full footprint clear, required age and resources.</td>
+</tr>
+<tr>
+<td>Cannot train</td>
+<td>Allowed faction/age, available population, price, queue and blocked exits.</td>
+</tr>
+<tr>
+<td>Cannot age up</td>
+<td>Completed prerequisite structures and the full resource price.</td>
+</tr>
+<tr>
+<td>Cannot command</td>
+<td>Own the selected units; ordinary/team spectators cannot command.</td>
+</tr>
+<tr>
+<td>Units or camera appear slow</td>
+<td>Enable Escape's performance overlay; compare frame time, ping/ACK and server tick/serialization times.</td>
+</tr>
+<tr>
+<td>Older rate still shows 5 Hz</td>
+<td>Host Console → Tuning → choose and save 20 Hz for spectators.</td>
+</tr>
+<tr>
+<td>Edits do not appear</td>
+<td>Correct server/project, saved content, a new configured match, or a rebuilt C++ runtime as appropriate.</td>
+</tr>
+</tbody>
+</table>
+<p>For a useful report, include the version, platform, build source from <code>BUILD-INFO.txt</code>, mode, map size/seed, factions, approximate entity count and exact reproduction steps. Save host logs/diagnostics and describe what you expected versus what happened. Do not publish session tokens or private network details unnecessarily.</p>
+<h2 id="10-movement-recovery-and-victory-reveal">10. Movement recovery and victory reveal</h2>
+<p>A unit that keeps trying to walk but makes less than 0.15 tile of progress from
+its recovery anchor for three simulated seconds is moved to the nearest safe
+free tile within three tiles. Its ID, health, carried resources, current order
+and queued destinations are preserved. Candidates must be in bounds, walkable,
+currently team-visible, clear of live units and outside hostile attack range.
+If none is safe, the unit waits and retries after one simulated second. Normal
+work, idling and garrisoning do not trigger relocation. Pause freezes this timer.
+Exceptional search work is limited to eight units per tick; large simultaneous
+stalls can recover later than the three-second threshold.</p>
+<p>Once a winner is declared, the whole playable map is revealed to all remaining
+connections, including defeated commanders. During an unfinished match, defeated
+commanders remain limited to team vision. Victory does not grant command
+permissions, restart the simulation or reveal another kingdom's private wallet.
+Out-of-map preview fog and the locked main-menu camera are unchanged.</p>
+<h2 id="further-reading">Further reading</h2>
+<p><a href="technology.html">Technology</a> · <a href="https://github.com/fiveft55/codex-rts-gametest/blob/main/docs/GAMEPLAY.md">Gameplay</a> · <a href="https://github.com/fiveft55/codex-rts-gametest/blob/main/docs/ECONOMY.md">Economy</a> · <a href="https://github.com/fiveft55/codex-rts-gametest/blob/main/docs/NEW_ERA.md">Civilizations</a> · <a href="https://github.com/fiveft55/codex-rts-gametest/blob/main/docs/AI.md">AI</a> · <a href="https://github.com/fiveft55/codex-rts-gametest/blob/main/docs/HOSTING.md">Hosting</a> · <a href="https://github.com/fiveft55/codex-rts-gametest/blob/main/docs/DIAGNOSTICS.md">Diagnostics</a> · <a href="https://github.com/fiveft55/codex-rts-gametest/blob/main/docs/STUDIO.md">Studio</a> · <a href="https://github.com/fiveft55/codex-rts-gametest/blob/main/docs/ENGINE.md">Engine</a> · <a href="https://github.com/fiveft55/codex-rts-gametest/blob/main/docs/EXPORTS.md">Exports</a> · <a href="https://github.com/fiveft55/codex-rts-gametest/blob/main/docs/ART.md">Artwork</a> · <a href="https://github.com/fiveft55/codex-rts-gametest/blob/main/docs/PROGRESS.md">Recovery timeline</a>.</p><section class="technology-print"><h1 id="technology-and-core-structures-06silkroad">Technology and core structures · 0.6.SilkRoad</h1>
+<p>This explains <strong>what we use, why we use it, and what it changes in the game</strong>. For playing instructions and pictures, start with the <a href="field-guide.html">illustrated field guide</a>. For actual research such as Forging and Wheelbarrow, see <a href="field-guide.html#ages-and-research-are-separate-decisions">the guide's research table</a> and <a href="https://github.com/fiveft55/codex-rts-gametest/blob/main/docs/ECONOMY.md">Economy</a>.</p>
+<p>“Core structures” here means both the engine's data structures and the rules that define buildings, units, maps and sessions. A pixel on the screen is a representation of that state; it is not the state itself.</p>
+<p>See <a href="https://github.com/fiveft55/codex-rts-gametest/blob/main/docs/SILKROAD.md">SilkRoad</a> for browser-room authority/bounds and construction queues, and <a href="https://github.com/fiveft55/codex-rts-gametest/blob/main/docs/STEAMWORKS.md">Steam preparation</a> for SDK-dependent limitations. Canvas remains the renderer; no custom WebGL/WebGPU backend is shipped.</p>
+<p><img alt="Browser room authority and spectator transport" src="images/guide-silkroad-network.svg" /></p>
+<h2 id="1-the-short-version">1. The short version</h2>
+<p><img alt="Commands enter C++ rules, then filtered snapshots become graphics; native Windows and WebAssembly are two deployment paths" src="images/guide-technology.svg" /></p>
+<p>Think of C++ as the referee and record book. JavaScript is the display and control desk. JSON is a form for sending instructions or saving designs. Canvas paints the picture; Web Audio produces the sound. The compiler turns source into a runnable Windows program or a WebAssembly module.</p>
+<h2 id="2-the-technology-stack-and-its-consequences">2. The technology stack and its consequences</h2>
+<table>
+<thead>
+<tr>
+<th>Technology</th>
+<th>Job</th>
+<th>Effect on core structures</th>
+<th>Where to look</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>C++17</strong></td>
+<td>Simulation, validation, AI, native HTTP, content and exports</td>
+<td>Shared definitions plus compact changing entity records; explicit capacities and ownership. Real costs, damage, collision and vision belong here. C++ is compiled, not edited live during a match.</td>
+<td><code>games/crownfall/</code>, <code>engine/</code></td>
+</tr>
+<tr>
+<td><strong>Standard C++ containers and fixed-capacity buffers</strong></td>
+<td>Entity state, tile grids, queues and reusable storage</td>
+<td>Bounds prevent unbounded growth. Shared definitions avoid copying a complete unit recipe into each unit. A fixed pool still occupies real memory.</td>
+<td><code>world.h</code>, <code>models.h</code>, <code>catalog.h</code></td>
+</tr>
+<tr>
+<td><strong>JavaScript + HTML/CSS</strong></td>
+<td>Mouse/keyboard, menus, HUD, tools, interpolation</td>
+<td>Translates user actions into commands and snapshots into UI. Changing CSS affects placement/readability, not legal costs or ground occupancy.</td>
+<td><code>web/game.js</code>, <code>controls.js</code>, <code>style.css</code>, <code>studio.*</code></td>
+</tr>
+<tr>
+<td><strong>Canvas 2D</strong></td>
+<td>Isometric battlefield and sprite drawing</td>
+<td>Uses projected tile coordinates, atlas cells and caches. It does not decide movement/collisions. The browser chooses its acceleration path; this is not a custom Vulkan/DirectX engine.</td>
+<td><code>web/art.js</code>, <code>ground.js</code>, <code>motion.js</code>, <code>damage.js</code></td>
+</tr>
+<tr>
+<td><strong>Procedural polygons, lines, hatching and RGB dithering</strong></td>
+<td>Original pixel art</td>
+<td>Bakes two selectable PNG themes used by many units, ages and poses; no runtime full-sheet generation. Changing a sprite does not change its logical footprint. Regenerate the atlas after editing its generator.</td>
+<td><code>web/art.js</code>, <code>scripts/generate_atlas.py</code></td>
+</tr>
+<tr>
+<td><strong>Web Audio API</strong></td>
+<td>Synthesized score and sound effects</td>
+<td>Sound follows events and user volume preferences. It never determines whether an attack actually deals damage.</td>
+<td><code>web/sound.js</code></td>
+</tr>
+<tr>
+<td><strong>HTTP over TCP</strong></td>
+<td>Commands, snapshots, diagnostics and pushed native observer streams</td>
+<td>The server authenticates session roles and filters visibility. Reliable delivery has scheduling and bandwidth costs; JSON deltas reduce repeated state, not all traffic.</td>
+<td><code>engine/http.*</code>, <code>network.*</code>, game application adapter</td>
+</tr>
+<tr>
+<td><strong>Optional UDP discovery</strong></td>
+<td>Find Windows hosts on the local network</td>
+<td>Broadcast/replies help locate a server. It does not replace TCP gameplay, open a firewall automatically, or provide Internet matchmaking.</td>
+<td><code>engine/discovery.*</code>, <code>network.*</code></td>
+</tr>
+<tr>
+<td><strong>JSON</strong></td>
+<td>Custom maps/civilizations, project settings, policies, API messages and profiles</td>
+<td>Stable IDs and validation preserve compatibility. The format is data, not unrestricted executable scripting. Server content and browser preferences have different storage locations.</td>
+<td><code>content.*</code>, <code>project.*</code>, <code>diagnostics.*</code>, <code>controls.js</code></td>
+</tr>
+<tr>
+<td><strong>WebAssembly + Emscripten</strong></td>
+<td>Compile the C++ game module for the Web demo</td>
+<td>Runs local AI rules inside a browser worker with the browser platform adapter. It shares gameplay source with Windows, but does not expose a native LAN server. Static browser rooms use a WebRTC adapter and a hosting tab.</td>
+<td><code>engine/web_main.cpp</code>, <code>http_web.cpp</code>, Web export templates</td>
+</tr>
+<tr>
+<td><strong>CMake / CPack and a C++ compiler</strong></td>
+<td>Build native targets and package ZIPs</td>
+<td>A C++ change requires a new runtime. Studio exports use runtime templates; stale templates export old rules. Windows can use Visual Studio, or a developer can cross-compile with MinGW.</td>
+<td><code>CMakeLists.txt</code>, <code>cmake/</code>, <code>packaging/</code></td>
+</tr>
+<tr>
+<td><strong>Python, Playwright and Chromium</strong></td>
+<td>Development tests, screenshots, atlas/export tooling</td>
+<td>Optional authoring/verification tools. No Python interpreter is used for in-match movement, networking or the shipped Windows game/Studio.</td>
+<td><code>tests/</code>, <code>scripts/</code></td>
+</tr>
+</tbody>
+</table>
+<p>There is no Node.js server dependency for players, and no database service, remote font or downloaded art service needed for a normal offline match. Development tools may need their own installation.</p>
+<h2 id="3-how-one-command-travels-through-the-core">3. How one command travels through the core</h2>
+<p>Example: <strong>right-click a tree with a villager selected</strong>.</p>
+<ol>
+<li><code>web/game.js</code> resolves the clicked object/tile and selected IDs. The client sends an interaction command; it does not award itself wood.</li>
+<li>The application adapter identifies the commander from its session, checks permissions and passes the order to the world.</li>
+<li>The C++ world validates ownership, target visibility and the interaction. The villager receives an order and destination.</li>
+<li>Simulation ticks move the villager, gather a carried load and return it to a completed friendly Town Center. Only delivery adds to the stockpile.</li>
+<li>A filtered snapshot reports the new positions, orders and resources. Player views hide enemy information they are not allowed to know.</li>
+<li>JavaScript interpolates the visible motion, chooses work frames, updates counters and plays appropriate sound.</li>
+</ol>
+<p>A client could alter its local picture, but the server still decides the authoritative outcome. A hidden enemy must stay absent from player data, rather than merely being drawn transparent.</p>
+<h2 id="4-the-important-data-structures">4. The important data structures</h2>
+<table>
+<thead>
+<tr>
+<th>Structure</th>
+<th>Plain-language meaning</th>
+<th>Rule to preserve when editing</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Catalog definition</td>
+<td>A shared recipe: cost, health, range, speed, age, producer and footprint</td>
+<td>Use the same definition for validation and relevant UI; append stable IDs instead of renumbering saved content.</td>
+</tr>
+<tr>
+<td>Entity</td>
+<td>One changing unit/building/resource record: ID, owner, kind, position, health, orders and timers</td>
+<td>An entity is not a private thread, a copied map or a fresh atlas. Reusing a slot must clear old orders, garrison and queue references.</td>
+</tr>
+<tr>
+<td>Player/civilization state</td>
+<td>Economy, age, researched levels and faction multipliers</td>
+<td>A story alone grants nothing; multipliers must be validated and applied by C++. Keep private player economies private.</td>
+</tr>
+<tr>
+<td>Tile grids</td>
+<td>Terrain, occupied cells and visibility per map location</td>
+<td>Render height is not occupied size. Town Center/Fortress = 3×3; ordinary buildings = 2×2; resources/walls = 1×1.</td>
+</tr>
+<tr>
+<td>Spatial buckets</td>
+<td>Nearby entities grouped by location</td>
+<td>Reduce broad collision/search work. Rebuild when required so a moved unit is not checked only in its old bucket. Do not silently drop contacts to fake performance.</td>
+</tr>
+<tr>
+<td>Waypoint pool</td>
+<td>Reusable route nodes shared by mobile units</td>
+<td>At most 16 pending points per unit and 16,384 across the match. Return nodes on cancellation, death and slot reuse. Houses do not each allocate a private route array.</td>
+</tr>
+<tr>
+<td>Production/research state</td>
+<td>Small queues, progress values and technology arrays</td>
+<td>Production is bounded to eight queued entries per building. Research has real payment, age checks and cancellation semantics.</td>
+</tr>
+<tr>
+<td>Visibility and death records</td>
+<td>Team sight, remembered land and short sight grace after a death</td>
+<td>Five-second grace uses simulated time. Spectators and defeated commanders have different permissions. Do not turn “left sight” into a fake death.</td>
+</tr>
+<tr>
+<td>Snapshot baseline/delta</td>
+<td>The last transmitted view and its changes</td>
+<td>Keep entity removal, reset boundaries, fog and revision recovery correct. A smaller packet that loses a death/order is not a valid optimization.</td>
+</tr>
+</tbody>
+</table>
+<p>The current full RTS is bounded to <strong>8,192 entity slots</strong> and maps up to <strong>128×128</strong>. The million-disc crowd benchmark tests a different, simpler workload. Neither the benchmark nor these limits promise a million RTS units or zero RAM consumption. See <a href="https://github.com/fiveft55/codex-rts-gametest/blob/main/docs/ENGINE.md">engine internals</a>, <a href="https://github.com/fiveft55/codex-rts-gametest/blob/main/docs/MONARCH.md">crowd benchmark</a> and <a href="https://github.com/fiveft55/codex-rts-gametest/blob/main/docs/PERFORMANCE.md">performance measurements</a>.</p>
+<h2 id="5-three-clocks-three-different-effects">5. Three clocks; three different effects</h2>
+<table>
+<thead>
+<tr>
+<th>Clock</th>
+<th>Current normal setting</th>
+<th>Changes what?</th>
+<th>Does not change…</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Simulation</td>
+<td>20 fixed ticks per simulated second, 0.05 s each</td>
+<td>Movement, gathering, combat, timers and legal outcomes</td>
+<td>The monitor's refresh rate. Pause and game speed affect simulated time.</td>
+</tr>
+<tr>
+<td>Snapshots</td>
+<td>Players and spectators default to 20 Hz; host tuning 5–60 Hz</td>
+<td>How often state is requested/pushed and the bandwidth/serialization budget</td>
+<td>The number of simulation ticks. More updates are not free CPU/network work.</td>
+</tr>
+<tr>
+<td>Rendering</td>
+<td>60 FPS default; presets through 200, custom 1–1000</td>
+<td>How often the browser draws/interpolates the visible world</td>
+<td>Attack damage, resource creation or server authority. A cap is not a guaranteed achieved frame rate.</td>
+</tr>
+</tbody>
+</table>
+<p>Native full spectators share serialization of a full-map view; defeated commanders receive private team-filtered views. Receive-only means no recurring spectator gameplay polling/ping/telemetry, <strong>not zero TCP acknowledgements or setup traffic</strong>. Waiting lobbies and background polling may use slower schedules. Previously saved explicit tuning remains in force until changed.</p>
+<h3 id="what-multicore-actually-means-here">What “multicore” actually means here</h3>
+<p>The simulation mutates the world on one thread. A bounded worker pool can prepare independent native snapshots while the world is immutable. A barrier finishes those reads before mutation resumes. Worker count is automatic up to four by default, configurable 0–8. A worker does not run its own independent army or map simulation. WebAssembly snapshots run inline; the Web demo does not require SharedArrayBuffer or cross-origin isolation.</p>
+<p>This design avoids copying a complete live world for every viewer. It also keeps a clear synchronization boundary. Turning movement into unsynchronized parallel writes would introduce races rather than automatically make the game faster.</p>
+<h2 id="6-rendering-choices-and-their-structural-impact">6. Rendering choices and their structural impact</h2>
+<ul>
+<li><strong>Shared atlas:</strong> many units reuse generated frames. Owner-color dye protects skin, hair and metal instead of repainting the whole sprite. Unit types use quiet eight-pose idle and sixteen-pose movement/work/attack cycles.</li>
+<li><strong>World-anchored ground chunks:</strong> panning translates cached terrain instead of repainting every map tile. The cache is bounded to 128 padded 258×258 RGBA canvases, about 32.5 MiB of pixel buffers; browser bookkeeping can use additional memory.</li>
+<li><strong>Cropped terrain strip:</strong> ground contexts use only the terrain cells, reducing large texture uploads from the full atlas.</li>
+<li><strong>Fog-aware invalidation:</strong> caches must rebuild when relevant fog, terrain, grid or map settings change. Caching an old clear tile must not reveal a newly hidden area.</li>
+<li><strong>Cached minimap and off-screen rejection:</strong> avoid redrawing static overview terrain or processing visible detail for every off-screen object.</li>
+<li><strong>Local camera:</strong> pan/zoom and debug camera boxes stay client-side. Camera positions are not sent in recurring player state polls. The current main-menu camera matches <code>2fc6e69</code> at 1.7×; its exterior tiles remain opaque fog.</li>
+</ul>
+<p>These reduce repeated work; they do not remove all rendering cost or guarantee 100+ FPS on every processor. <a href="https://github.com/fiveft55/codex-rts-gametest/blob/main/docs/PANNING.md">Measured panning work</a> · <a href="https://github.com/fiveft55/codex-rts-gametest/blob/main/docs/ART.md">art and animation layout</a>.</p>
+<h2 id="7-what-changes-need-a-rebuild">7. What changes need a rebuild?</h2>
+<table>
+<thead>
+<tr>
+<th>Intended change</th>
+<th>Edit</th>
+<th>Immediate structural effect</th>
+<th>Apply it safely</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>New resource layout or player starts</td>
+<td>Map designer / map JSON</td>
+<td>Terrain/object/start data</td>
+<td>Save, validate and configure a new playtest. No C++ rebuild.</td>
+</tr>
+<tr>
+<td>Faction story, allowed data multipliers and starting supplies</td>
+<td>Civilization designer / content JSON</td>
+<td>Validated definition used at match setup</td>
+<td>Save and configure the next match. New behavior outside the format needs code.</td>
+</tr>
+<tr>
+<td>Menu spacing, font or icon</td>
+<td>Browser HTML/CSS/JS</td>
+<td>Presentation only</td>
+<td>Reload the affected page and check narrow screens.</td>
+</tr>
+<tr>
+<td>Walk/attack poses or building appearance</td>
+<td><code>web/art.js</code>, motion/damage code</td>
+<td>Atlas/visual selection, not hit range or footprint</td>
+<td>Regenerate <code>atlas.png</code> when needed, then reload and verify bounds/facing/owner dye.</td>
+</tr>
+<tr>
+<td>Gathering speed, repair cost, unit stats or age rules</td>
+<td>Catalog/world C++</td>
+<td>Actual authoritative game behavior</td>
+<td>Rebuild Windows <strong>and</strong> WebAssembly, refresh Studio runtime templates, run meaningful native/network checks and export again.</td>
+</tr>
+<tr>
+<td>New unit or building class</td>
+<td>Stable kinds, catalog, world, content validation, UI and art</td>
+<td>Extends several coupled systems</td>
+<td>Add all rule/production/pathing/visibility/art hooks; test save compatibility, then rebuild both targets.</td>
+</tr>
+<tr>
+<td>New server role, message or snapshot field</td>
+<td>Application/HTTP/network plus matching client</td>
+<td>Authority, protocol and information exposure</td>
+<td>Test permissions, resets, slow clients and team fog; rebuild affected runtimes and clients together.</td>
+</tr>
+<tr>
+<td>Live rates or IP policy</td>
+<td>Host Console Tuning</td>
+<td>Persisted server policy</td>
+<td>Save; inspect CPU, serialization and network counters. No compiler needed.</td>
+</tr>
+<tr>
+<td>New independent game</td>
+<td>Implement the engine application interface and game module</td>
+<td>New rules isolated from On'Gate: Legacy</td>
+<td>Use Orbit as a small example; rebuild and select the module in Project &amp; export.</td>
+</tr>
+</tbody>
+</table>
+<p>A <strong>source edit</strong> is not a new executable. A <strong>sprite-sheet export</strong> is not a rebuilt simulation. Studio can edit text and validate JS/JSON, but does not include a C++ compiler, breakpoint debugger, campaign trigger graph or universal drag-and-drop game engine.</p>
+<h2 id="8-file-map-and-storage">8. File map and storage</h2>
+<pre><code class="language-text">engine/                  shared HTTP, platform, project, export and diagnostic services
+  application.*          game-module interface and selection
+  main.cpp               native process, clock and request scheduling
+  web_main.cpp           browser/WebAssembly adapter
+  diagnostics.*          process/timing counters and persisted host policy
+  project.*              authorized source operations and backup boundary
+
+games/crownfall/          this RTS's rules, content and session adapter
+  catalog.h              types, prices, research, footprints and capacities
+  world.*                economy, movement, collision, combat, vision and research
+  races.h / content.*    built-in peoples and editable content validation
+  application.cpp        lobby, roles, commands and snapshot envelopes
+
+games/orbit/              smaller independent module proving engine separation
+web/                     menus, Canvas art, audio, input, host console and Studio
+export-templates/        compiled Windows/Web runtimes used by Studio exports
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Stored item</th>
+<th>Location</th>
+<th>Backup advice</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Saved maps and civilizations</td>
+<td>Server/Studio <code>data/content.json</code></td>
+<td>Export JSON and copy the file before upgrading.</td>
+</tr>
+<tr>
+<td>Live host rates and IP policy</td>
+<td><code>data/server-policy.json</code></td>
+<td>Preserve consciously; an old saved rate overrides a new default.</td>
+</tr>
+<tr>
+<td>Source and project text</td>
+<td>Studio's <code>project/</code></td>
+<td>Commit or copy changes before replacing the application.</td>
+</tr>
+<tr>
+<td>Source backups from Studio saves</td>
+<td><code>data/studio-backups/</code></td>
+<td>Bounded history, not a substitute for external backups.</td>
+</tr>
+<tr>
+<td>Keys, camera, audio and graphics preferences</td>
+<td>That browser's local storage</td>
+<td>Export keyboard/camera profiles; other preferences are separate.</td>
+</tr>
+<tr>
+<td>Active session, units and selection</td>
+<td>Live engine/browser state</td>
+<td>Not a persistent saved match. Restarting loses the ongoing battle.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="9-development-and-release-checklist">9. Development and release checklist</h2>
+<ol>
+<li>Identify the smallest layer that owns the change. Keep UI changes out of simulation when the rule is unchanged.</li>
+<li>Take a source/content backup. Inspect the current version and recoverable <a href="https://github.com/fiveft55/codex-rts-gametest/blob/main/docs/PROGRESS.md">milestones</a>.</li>
+<li>For C++ rule/API changes, run <code>make check</code> internally or the documented Windows build/tests. Add a meaningful scenario for new behavior; do not rely only on a disabled UI button.</li>
+<li>For art/layout changes, regenerate relevant assets and inspect the result. For network changes, exercise role/fog authorization, restart/delta recovery and slow/disconnected receivers.</li>
+<li>Rebuild affected Windows/Web runtimes, refresh templates, then export. Test actual extracted packages. A source ZIP passing tests does not prove its bundled executable is current.</li>
+<li>Record the exact source revision in <code>BUILD-INFO.txt</code>, check ZIP integrity/SHA-256 and source/runtime parity, and publish a unique recovery milestone. Windows and Web are supported release targets; do not create new Linux/macOS releases.</li>
+</ol>
+<p>Installation: <a href="https://github.com/fiveft55/codex-rts-gametest/blob/main/docs/INSTALL.md">C++ and general tools</a> · <a href="https://github.com/fiveft55/codex-rts-gametest/blob/main/docs/WINDOWS.md">Visual Studio / Windows</a> · <a href="https://github.com/fiveft55/codex-rts-gametest/blob/main/docs/STUDIO.md">Studio</a> · <a href="https://github.com/fiveft55/codex-rts-gametest/blob/main/docs/EXPORTS.md">exports</a> · <a href="https://github.com/fiveft55/codex-rts-gametest/blob/main/docs/NEW_GAMES.md">new modules</a>.</p>
+<h2 id="10-maintain-these-handbooks">10. Maintain these handbooks</h2>
+<p>The editable sources are <code>docs/field-guide.html</code> and <code>docs/technology.html</code>.
+The screenshots are from a real current playtest; avoid replacing them with
+concept art that implies unimplemented features. SVG diagrams have descriptive
+titles and text, and remain editable vector files.</p>
+<pre><code class="language-sh">python3 scripts/generate-guide-visuals.py
+# Optional documentation tools only:
+python3 -m pip install Markdown playwright
+# Use an installed Chromium, or: python3 -m playwright install chromium
+python3 scripts/capture-guide.py
+python3 scripts/render-guide.py --pdf
+</code></pre>
+<p>The renderer creates offline <code>docs/field-guide.html</code>, <code>docs/technology.html</code> and
+the combined <code>docs/OnGate-Legacy-Handbook.pdf</code>. Recheck relative links, section
+anchors, mobile widths, diagram labels and the PDF after regeneration. Update
+prices/capacities from the catalog and verify workflow labels against the UI.</p>
+<h2 id="11-movement-recovery-state">11. Movement recovery state</h2>
+<p>Each entity now has three floats (stall time and position anchor) plus a walk
+attempt flag. The current GNU x64 build measures 196 bytes per <code>Entity</code> and
+2,784,464 bytes for fixed <code>World</code> storage; process/browser/network memory is
+additional. Recovery uses simulated time, local buckets and a bounded nearby
+search. It repositions the same entity; it does not create/delete a replacement
+or consume population/resources. Waypoint pools and cargo stay intact.</p>
+<p>Victory reveal is authoritative: the world marks playable tiles visible and
+explored for all players after a winner is decided. Full and delta snapshots
+carry that fog transition. Before victory, normal player/team filters apply.</p></section><footer>Editable sources: FIELD_GUIDE.md and TECHNOLOGY.md. Images and diagrams are included locally. No tracking, external fonts or JavaScript is required to read this handbook.</footer></article></div></body></html>

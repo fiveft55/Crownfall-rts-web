@@ -1,0 +1,151 @@
+{
+  "release": "0.5.Monarch",
+  "environment": {
+    "platform": "Linux x86_64 cloud executor",
+    "cpu": "AMD EPYC 9V74 80-Core Processor",
+    "compiler": "g++ (Debian 14.2.0-19) 14.2.0",
+    "simulationThreads": 1,
+    "legacy2010HardwareTested": false,
+    "physicalLANTested": false
+  },
+  "fullRTS": {
+    "scope": "1000 villagers + 2500 houses, 1200 ticks/case; identical g++ -O2 harness; snapshots exclude HTTP envelope",
+    "baselineRevision": "b8a839de594e8567e34e93305169a4e305e23fa6",
+    "before": {
+      "entityBytes": 180,
+      "worldBytes": 2652224,
+      "capacity": 8192,
+      "cases": [
+        {
+          "name": "idle-estate",
+          "units": 1000,
+          "houses": 2500,
+          "ticks": 1200,
+          "meanMs": 1.369,
+          "p95Ms": 5.542,
+          "maxMs": 9.544,
+          "tickHeapAllocations": 0,
+          "maxPathSearches": 0,
+          "observerSnapshotBytes": 861948,
+          "serializeMs": 7.301,
+          "unchangedDeltaBytes": 944,
+          "unchangedDeltaMs": 0.428
+        },
+        {
+          "name": "moving-army",
+          "units": 1000,
+          "houses": 2500,
+          "ticks": 1200,
+          "meanMs": 1.299,
+          "p95Ms": 5.402,
+          "maxMs": 7.568,
+          "tickHeapAllocations": 0,
+          "maxPathSearches": 0,
+          "observerSnapshotBytes": 865438,
+          "serializeMs": 6.709,
+          "unchangedDeltaBytes": 944,
+          "unchangedDeltaMs": 0.414
+        },
+        {
+          "name": "bridge-pathfinding",
+          "units": 1000,
+          "houses": 2500,
+          "ticks": 1200,
+          "meanMs": 5.406,
+          "p95Ms": 9.713,
+          "maxMs": 11.607,
+          "tickHeapAllocations": 0,
+          "maxPathSearches": 16,
+          "observerSnapshotBytes": 860393,
+          "serializeMs": 6.623,
+          "unchangedDeltaBytes": 944,
+          "unchangedDeltaMs": 0.413
+        }
+      ],
+      "processPeakRSSKiB": 8536
+    },
+    "monarch": {
+      "entityBytes": 180,
+      "worldBytes": 2653392,
+      "capacity": 8192,
+      "cases": [
+        {
+          "name": "idle-estate",
+          "units": 1000,
+          "houses": 2500,
+          "ticks": 1200,
+          "meanMs": 0.895,
+          "p95Ms": 3.062,
+          "maxMs": 4.629,
+          "tickHeapAllocations": 0,
+          "maxPathSearches": 0,
+          "observerSnapshotBytes": 896996,
+          "serializeMs": 7.387,
+          "unchangedDeltaBytes": 982,
+          "unchangedDeltaMs": 0.425
+        },
+        {
+          "name": "moving-army",
+          "units": 1000,
+          "houses": 2500,
+          "ticks": 1200,
+          "meanMs": 0.844,
+          "p95Ms": 3.003,
+          "maxMs": 5.322,
+          "tickHeapAllocations": 0,
+          "maxPathSearches": 0,
+          "observerSnapshotBytes": 900486,
+          "serializeMs": 7.953,
+          "unchangedDeltaBytes": 982,
+          "unchangedDeltaMs": 0.522
+        },
+        {
+          "name": "bridge-pathfinding",
+          "units": 1000,
+          "houses": 2500,
+          "ticks": 1200,
+          "meanMs": 4.969,
+          "p95Ms": 7.223,
+          "maxMs": 8.638,
+          "tickHeapAllocations": 0,
+          "maxPathSearches": 16,
+          "observerSnapshotBytes": 895530,
+          "serializeMs": 6.747,
+          "unchangedDeltaBytes": 982,
+          "unchangedDeltaMs": 0.445
+        }
+      ],
+      "processPeakRSSKiB": 8644
+    },
+    "meanTickReductionPercent": {
+      "idle-estate": 34.6,
+      "moving-army": 35.0,
+      "bridge-pathfinding": 8.1
+    }
+  },
+  "millionBodyPhysics": {
+    "scope": "equal-radius swept-disc physics; excludes RTS AI/pathfinding/fog/network/rendering",
+    "bodies": 1000000,
+    "ticks": 32,
+    "meanMs": 36.8183,
+    "p95Ms": 39.0082,
+    "maxMs": 39.2324,
+    "storageBytes": 31090564,
+    "lastCandidatePairs": 5177254,
+    "totalContacts": 5000000,
+    "identityChecksum": 1053010000.0
+  },
+  "atlas": {
+    "width": 4096,
+    "height": 9056,
+    "decodedRGBABytes": 148373504,
+    "previousDecodedRGBAMiB": 163.25,
+    "tintCacheMaximumRGBABytes": 12582912
+  },
+  "limits": [
+    "Million bodies measures equal-radius swept-disc physics only, not RTS AI/pathfinding/fog/network/rendering.",
+    "Full RTS remains bounded to 8192 entity slots and 120 population per kingdom.",
+    "Dense true contacts remain quadratic; no per-cell cap silently discards them.",
+    "Measurements vary with machine/load and do not establish 2010 CPU or guaranteed FPS support."
+  ]
+}

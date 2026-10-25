@@ -62,7 +62,7 @@
     typeof key === "string" && allowed.test(key) && !reserved.has(key);
   function validate(value) {
     if (!value || typeof value !== "object" || !value.bindings)
-      throw new Error("Expected a Crownfall keyboard profile.");
+      throw new Error("Expected a On\u0027Gate: Legacy keyboard profile.");
     const bindings = {},
       missing = [];
     const added = {
@@ -229,7 +229,7 @@
     );
     const link = document.createElement("a");
     link.href = url;
-    link.download = "Crownfall-keyboard.json";
+    link.download = "OnGate-Legacy-keyboard.json";
     link.click();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
     status.textContent =

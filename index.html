@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Crownfall — Monarch</title>
+    <title>On'Gate: Legacy — Monarch</title>
     <link rel="icon" href="./favicon.svg" />
     <link rel="stylesheet" href="./style.css" />
     <link rel="stylesheet" href="./monarch.css" />
@@ -18,8 +18,8 @@
       <a class="wordmark" href="./"
         >♜
         <span
-          >Crownfall<small
-            ><span id="release-version">0.5.Monarch</span></small
+          >On'Gate: Legacy<small
+            ><span id="release-version">0.6.SilkRoad</span></small
           ></span
         ></a
       >
@@ -101,7 +101,14 @@
               <option value="2">Twin Lakes · lakes and woodland</option>
             </select></label
           >
-          <div class="field-row">
+          <label>Building art<select id="lobby-art-theme"><option value="silk-road">Silk-Road</option><option value="legacy">Legacy</option></select></label>
+          <label>Map size<select id="lobby-size"><option value="64" selected>64 × 64</option>
+              <option value="80">80 × 80</option>
+              <option value="96">96 × 96</option>
+              <option value="112">112 × 112</option>
+              <option value="128">128 × 128</option>
+              <option value="custom">Custom dimensions</option></select></label>
+          <div class="field-row hidden" id="lobby-custom-dimensions">
             <label
               >Width in tiles<input
                 id="lobby-width"
@@ -129,6 +136,7 @@
                 value="7"
             /></label>
           </div>
+          <button id="peer-invite" hidden>INVITES &amp; CONNECTIONS</button>
           <button id="apply-map">APPLY MAP SETTINGS</button>
           <p id="lobby-map-note">
             48–128 tiles per side. Choose 96 or 128 for a large council.
@@ -159,11 +167,11 @@
         ><button id="start-match" class="primary">START MATCH →</button>
       </div>
     </section>
-    <main id="welcome" class="menu-shell" aria-label="Crownfall main menu">
+    <main id="welcome" class="menu-shell" aria-label="On'Gate: Legacy main menu">
       <header class="menu-header">
-        <a class="menu-brand" href="./" aria-label="Crownfall main menu"
+        <a class="menu-brand" href="./" aria-label="On'Gate: Legacy main menu"
           ><span aria-hidden="true">♜</span
-          ><span>Crownfall<small id="menu-version">0.5.Monarch</small></span></a
+          ><span>On'Gate: Legacy<small id="menu-version">0.6.SilkRoad</small></span></a
         >
         <div class="welcome-story">
           <div class="eyebrow">A REALM WAITING TO BE BUILT</div>
@@ -281,7 +289,9 @@
               <label
                 >Map size<select id="map-preset">
                   <option value="64" selected>64 × 64 · small</option>
+                  <option value="80">80 × 80</option>
                   <option value="96">96 × 96 · standard</option>
+                  <option value="112">112 × 112</option>
                   <option value="128">128 × 128 · large</option>
                   <option value="custom">Custom dimensions</option>
                 </select></label
@@ -378,7 +388,7 @@
     <footer id="command-deck">
       <section class="minimap-wrap">
         <div class="panel-heading">
-          <span>THE RIVERLANDS</span><span id="map-size">64 × 64</span>
+          <span id="minimap-title">THE RIVERLANDS</span><span id="map-size">64 × 64</span>
         </div>
         <canvas
           id="minimap"
@@ -416,7 +426,7 @@
           aria-label="Villager action categories"
         ></div>
         <div id="actions"></div>
-        <div id="queue"></div>
+        <div id="queue"></div><div id="production-icons" aria-label="Production and garrison"></div>
       </section>
       <section id="chronicle">
         <div class="panel-heading">
@@ -435,7 +445,7 @@
       <h2>Your field guide</h2>
       <div class="guide-grid">
         <article>
-          <h3>Monarch</h3>
+          <h3>SilkRoad</h3>
           <p>
             Choose one of ten fantasy peoples before joining. Stories and
             bonuses appear under People &amp; Civilization. Barracks train early
@@ -459,7 +469,7 @@
             construction resources per full health bar restored.
           </p>
           <p>
-            Build a School for gathering and villager walking upgrades. In the
+            From Feudal Age, build a School for gathering and villager walking upgrades. In the
             Feudal Age, build a Blacksmith for soldier attack and armor
             upgrades. Select the structure to research; its price and age
             requirements appear on hover.
@@ -485,9 +495,9 @@
         <article>
           <h3>03 &nbsp; Raise your banner</h3>
           <p>
-            Select your Town Center to train villagers. Barracks train spearmen.
+            Select your Town Center to train villagers. Barracks train early infantry.
             Advance to the Feudal Age for archers and towers, then the Castle
-            Age for knights. Spearmen counter cavalry.
+            Age for knights and Swordsmanship. Spearmen counter cavalry. Advance works with any selection. Shift-place queues construction; drag Walls and press R to rotate Gates. Town Centers cannot be razed.
           </p>
         </article>
         <article>
@@ -972,6 +982,31 @@
         class="hidden"
       />
     </dialog>
+    <dialog id="peer-dialog" class="peer-dialog">
+      <h2>Browser multiplayer · WebRTC</h2>
+      <p>The hosting tab runs the match. Exchange one invitation and answer per friend.
+      HTTPS or localhost is required. LAN can connect directly; Internet connections
+      may require STUN/TURN. An IP address alone cannot make a browser serve HTTP.</p>
+      <details><summary>Connection settings</summary><label>ICE servers (JSON, optional)<textarea id="peer-ice" rows="3">[]</textarea></label>
+      <p>For Internet discovery, both players can use [{"urls":"stun:stun.l.google.com:19302"}].
+      Restrictive NATs need an independently configured TURN relay; this service is not bundled.</p></details>
+      <section id="peer-host-controls">
+        <button id="peer-create-invite">Create one-use invitation</button>
+        <label>Send this invitation to your friend<textarea id="peer-host-code" rows="3" readonly></textarea></label>
+        <button id="peer-host-code-copy">Copy invitation</button>
+        <label>Paste their answer<textarea id="peer-host-answer" rows="3"></textarea></label>
+        <button id="peer-accept-answer">Accept answer</button>
+      </section>
+      <section id="peer-join-controls" hidden>
+        <label>Join as<select id="peer-seat"><option value="join">Player</option><option value="watch">Spectator</option></select></label>
+        <label>Paste the host invitation<textarea id="peer-join-code" rows="3"></textarea></label>
+        <button id="peer-create-answer">Create answer</button>
+        <label>Send this answer back to the host<textarea id="peer-answer-code" rows="3" readonly></textarea></label>
+        <button id="peer-answer-code-copy">Copy answer</button>
+      </section>
+      <p id="peer-status" role="status">Share codes privately. Keep the host tab awake.</p>
+      <div id="peer-connections"></div><button id="peer-close">Close</button>
+    </dialog>
     <script src="./engine-bootstrap.js"></script><script src="./art.js"></script>
     <script src="./sound.js"></script>
     <script src="./controls.js"></script>
@@ -981,5 +1016,6 @@
     <script src="./ground.js"></script>
     <script src="./game.js"></script>
     <script src="./workshop.js"></script>
+    <script src="./peer.js"></script>
   </body>
 </html>

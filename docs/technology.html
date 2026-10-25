@@ -1,0 +1,401 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>On'Gate: Legacy · Technology and core structures</title><style>
+:root{color-scheme:light;--ink:#183b34;--gold:#91631d;--paper:#fffdf7;--line:#d3dac9}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:#eef0e7;color:var(--ink);font:16px/1.65 system-ui,Arial,sans-serif}
+a{color:#216851;text-underline-offset:3px}a:hover{color:var(--gold)}header{background:#17382f;color:#f9f2d4;padding:32px max(24px,calc((100vw - 1250px)/2));border-bottom:5px solid #cfb678}
+header p{margin:4px 0}header strong{font:32px Georgia,serif;letter-spacing:2px}header a{color:#f2dfad;margin-right:22px}header small{display:block;color:#c4d3c3;margin-bottom:16px}
+.layout{display:grid;grid-template-columns:250px minmax(0,960px);gap:34px;max-width:1300px;margin:28px auto;padding:0 24px 60px}aside{font-size:13px;position:sticky;top:20px;max-height:94vh;overflow:auto;align-self:start;padding-right:8px}aside>strong{letter-spacing:2px;color:var(--gold)}aside ul{list-style:none;padding-left:12px}aside>div>ul{padding:0}aside li{margin:8px 0}aside a{text-decoration:none}aside ul ul ul{display:none}
+article{background:var(--paper);border:1px solid var(--line);padding:38px;min-width:0;border-radius:4px}h1,h2,h3{font-family:Georgia,serif;line-height:1.22;color:#193e32;scroll-margin-top:24px}h1{font-size:38px;margin:0 0 24px}h2{font-size:29px;margin:48px 0 20px;border-top:2px solid #d7c593;padding-top:24px}h3{font-size:22px;margin-top:30px}p,ul,ol{margin:16px 0}li{padding-left:3px;margin:7px 0}img{display:block;max-width:100%;height:auto;margin:24px auto;border:1px solid var(--line)}table{border-collapse:collapse;width:100%;font-size:14px;margin:22px 0;display:block;overflow-x:auto}th,td{border:1px solid var(--line);padding:11px 13px;text-align:left;vertical-align:top}th{background:#e6eddf;line-height:1.3}tr:nth-child(even){background:#f2f4eb}pre{background:#edf1e8;border-left:4px solid #b29655;padding:20px;overflow:auto;font:13px/1.6 monospace}code{font-size:.88em;overflow-wrap:anywhere}footer{margin:38px 0 0;font-size:13px;color:#587065}.print-cover{display:none}.technology-print{display:none}
+@media(max-width:900px){.layout{display:block;padding:0 12px 30px;margin-top:15px}aside{position:static;max-height:280px;margin-bottom:20px;border:1px solid var(--line);padding:14px}article{padding:22px}header{padding:24px}h1{font-size:30px}h2{font-size:25px}}
+@media print{ @page{size:A4;margin:18mm 14mm 19mm}body{background:white;font:10pt/1.42 Arial,sans-serif}header,aside,footer,.screen-only{display:none}.layout{display:block;margin:0;padding:0;max-width:none}article{border:0;border-radius:0;padding:0}h1{font-size:25pt}h2{font-size:18pt;margin-top:24pt;padding-top:12pt;break-after:avoid}h3{font-size:13pt;break-after:avoid}p,ul,ol{margin:9pt 0}li{margin:3pt 0}table{display:table;overflow:visible;font-size:8.5pt;margin:12pt 0;table-layout:auto}th,td{padding:6pt;overflow-wrap:anywhere}tr{break-inside:avoid}thead{display:table-header-group}img{max-width:100%;max-height:210mm;object-fit:contain;break-inside:avoid;margin:12pt auto}pre{font-size:8pt;white-space:pre-wrap}a{color:#173b34;text-decoration:none}.technology-print{display:block;break-before:page}.print-cover{display:block;break-after:page;padding-top:35mm}.print-cover h1{font:38pt Georgia,serif}.print-cover p{font-size:16pt;margin-top:24pt}.print-cover img{max-height:115mm} }
+</style></head><body><header><strong>ON'GATE: LEGACY</strong><small>0.6.SilkRoad · A practical handbook · 26 October 2026</small><nav aria-label="Handbook"><a href="field-guide.html">Play &amp; create</a><a href="technology.html">Technology &amp; core</a><a href="OnGate-Legacy-Handbook.pdf">Download PDF</a></nav></header><div class="layout"><aside aria-label="Contents"><strong>IN THIS GUIDE</strong><div class="toc">
+<ul>
+<li><a href="#technology-and-core-structures-06silkroad">Technology and core structures · 0.6.SilkRoad</a><ul>
+<li><a href="#1-the-short-version">1. The short version</a></li>
+<li><a href="#2-the-technology-stack-and-its-consequences">2. The technology stack and its consequences</a></li>
+<li><a href="#3-how-one-command-travels-through-the-core">3. How one command travels through the core</a></li>
+<li><a href="#4-the-important-data-structures">4. The important data structures</a></li>
+<li><a href="#5-three-clocks-three-different-effects">5. Three clocks; three different effects</a><ul>
+<li><a href="#what-multicore-actually-means-here">What “multicore” actually means here</a></li>
+</ul>
+</li>
+<li><a href="#6-rendering-choices-and-their-structural-impact">6. Rendering choices and their structural impact</a></li>
+<li><a href="#7-what-changes-need-a-rebuild">7. What changes need a rebuild?</a></li>
+<li><a href="#8-file-map-and-storage">8. File map and storage</a></li>
+<li><a href="#9-development-and-release-checklist">9. Development and release checklist</a></li>
+<li><a href="#10-maintain-these-handbooks">10. Maintain these handbooks</a></li>
+<li><a href="#11-movement-recovery-state">11. Movement recovery state</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</aside><article><h1 id="technology-and-core-structures-06silkroad">Technology and core structures · 0.6.SilkRoad</h1>
+<p>This explains <strong>what we use, why we use it, and what it changes in the game</strong>. For playing instructions and pictures, start with the <a href="field-guide.html">illustrated field guide</a>. For actual research such as Forging and Wheelbarrow, see <a href="field-guide.html#ages-and-research-are-separate-decisions">the guide's research table</a> and <a href="https://github.com/fiveft55/codex-rts-gametest/blob/main/docs/ECONOMY.md">Economy</a>.</p>
+<p>“Core structures” here means both the engine's data structures and the rules that define buildings, units, maps and sessions. A pixel on the screen is a representation of that state; it is not the state itself.</p>
+<p>See <a href="https://github.com/fiveft55/codex-rts-gametest/blob/main/docs/SILKROAD.md">SilkRoad</a> for browser-room authority/bounds and construction queues, and <a href="https://github.com/fiveft55/codex-rts-gametest/blob/main/docs/STEAMWORKS.md">Steam preparation</a> for SDK-dependent limitations. Canvas remains the renderer; no custom WebGL/WebGPU backend is shipped.</p>
+<p><img alt="Browser room authority and spectator transport" src="images/guide-silkroad-network.svg" /></p>
+<h2 id="1-the-short-version">1. The short version</h2>
+<p><img alt="Commands enter C++ rules, then filtered snapshots become graphics; native Windows and WebAssembly are two deployment paths" src="images/guide-technology.svg" /></p>
+<p>Think of C++ as the referee and record book. JavaScript is the display and control desk. JSON is a form for sending instructions or saving designs. Canvas paints the picture; Web Audio produces the sound. The compiler turns source into a runnable Windows program or a WebAssembly module.</p>
+<h2 id="2-the-technology-stack-and-its-consequences">2. The technology stack and its consequences</h2>
+<table>
+<thead>
+<tr>
+<th>Technology</th>
+<th>Job</th>
+<th>Effect on core structures</th>
+<th>Where to look</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>C++17</strong></td>
+<td>Simulation, validation, AI, native HTTP, content and exports</td>
+<td>Shared definitions plus compact changing entity records; explicit capacities and ownership. Real costs, damage, collision and vision belong here. C++ is compiled, not edited live during a match.</td>
+<td><code>games/crownfall/</code>, <code>engine/</code></td>
+</tr>
+<tr>
+<td><strong>Standard C++ containers and fixed-capacity buffers</strong></td>
+<td>Entity state, tile grids, queues and reusable storage</td>
+<td>Bounds prevent unbounded growth. Shared definitions avoid copying a complete unit recipe into each unit. A fixed pool still occupies real memory.</td>
+<td><code>world.h</code>, <code>models.h</code>, <code>catalog.h</code></td>
+</tr>
+<tr>
+<td><strong>JavaScript + HTML/CSS</strong></td>
+<td>Mouse/keyboard, menus, HUD, tools, interpolation</td>
+<td>Translates user actions into commands and snapshots into UI. Changing CSS affects placement/readability, not legal costs or ground occupancy.</td>
+<td><code>web/game.js</code>, <code>controls.js</code>, <code>style.css</code>, <code>studio.*</code></td>
+</tr>
+<tr>
+<td><strong>Canvas 2D</strong></td>
+<td>Isometric battlefield and sprite drawing</td>
+<td>Uses projected tile coordinates, atlas cells and caches. It does not decide movement/collisions. The browser chooses its acceleration path; this is not a custom Vulkan/DirectX engine.</td>
+<td><code>web/art.js</code>, <code>ground.js</code>, <code>motion.js</code>, <code>damage.js</code></td>
+</tr>
+<tr>
+<td><strong>Procedural polygons, lines, hatching and RGB dithering</strong></td>
+<td>Original pixel art</td>
+<td>Bakes two selectable PNG themes used by many units, ages and poses; no runtime full-sheet generation. Changing a sprite does not change its logical footprint. Regenerate the atlas after editing its generator.</td>
+<td><code>web/art.js</code>, <code>scripts/generate_atlas.py</code></td>
+</tr>
+<tr>
+<td><strong>Web Audio API</strong></td>
+<td>Synthesized score and sound effects</td>
+<td>Sound follows events and user volume preferences. It never determines whether an attack actually deals damage.</td>
+<td><code>web/sound.js</code></td>
+</tr>
+<tr>
+<td><strong>HTTP over TCP</strong></td>
+<td>Commands, snapshots, diagnostics and pushed native observer streams</td>
+<td>The server authenticates session roles and filters visibility. Reliable delivery has scheduling and bandwidth costs; JSON deltas reduce repeated state, not all traffic.</td>
+<td><code>engine/http.*</code>, <code>network.*</code>, game application adapter</td>
+</tr>
+<tr>
+<td><strong>Optional UDP discovery</strong></td>
+<td>Find Windows hosts on the local network</td>
+<td>Broadcast/replies help locate a server. It does not replace TCP gameplay, open a firewall automatically, or provide Internet matchmaking.</td>
+<td><code>engine/discovery.*</code>, <code>network.*</code></td>
+</tr>
+<tr>
+<td><strong>JSON</strong></td>
+<td>Custom maps/civilizations, project settings, policies, API messages and profiles</td>
+<td>Stable IDs and validation preserve compatibility. The format is data, not unrestricted executable scripting. Server content and browser preferences have different storage locations.</td>
+<td><code>content.*</code>, <code>project.*</code>, <code>diagnostics.*</code>, <code>controls.js</code></td>
+</tr>
+<tr>
+<td><strong>WebAssembly + Emscripten</strong></td>
+<td>Compile the C++ game module for the Web demo</td>
+<td>Runs local AI rules inside a browser worker with the browser platform adapter. It shares gameplay source with Windows, but does not expose a native LAN server. Static browser rooms use a WebRTC adapter and a hosting tab.</td>
+<td><code>engine/web_main.cpp</code>, <code>http_web.cpp</code>, Web export templates</td>
+</tr>
+<tr>
+<td><strong>CMake / CPack and a C++ compiler</strong></td>
+<td>Build native targets and package ZIPs</td>
+<td>A C++ change requires a new runtime. Studio exports use runtime templates; stale templates export old rules. Windows can use Visual Studio, or a developer can cross-compile with MinGW.</td>
+<td><code>CMakeLists.txt</code>, <code>cmake/</code>, <code>packaging/</code></td>
+</tr>
+<tr>
+<td><strong>Python, Playwright and Chromium</strong></td>
+<td>Development tests, screenshots, atlas/export tooling</td>
+<td>Optional authoring/verification tools. No Python interpreter is used for in-match movement, networking or the shipped Windows game/Studio.</td>
+<td><code>tests/</code>, <code>scripts/</code></td>
+</tr>
+</tbody>
+</table>
+<p>There is no Node.js server dependency for players, and no database service, remote font or downloaded art service needed for a normal offline match. Development tools may need their own installation.</p>
+<h2 id="3-how-one-command-travels-through-the-core">3. How one command travels through the core</h2>
+<p>Example: <strong>right-click a tree with a villager selected</strong>.</p>
+<ol>
+<li><code>web/game.js</code> resolves the clicked object/tile and selected IDs. The client sends an interaction command; it does not award itself wood.</li>
+<li>The application adapter identifies the commander from its session, checks permissions and passes the order to the world.</li>
+<li>The C++ world validates ownership, target visibility and the interaction. The villager receives an order and destination.</li>
+<li>Simulation ticks move the villager, gather a carried load and return it to a completed friendly Town Center. Only delivery adds to the stockpile.</li>
+<li>A filtered snapshot reports the new positions, orders and resources. Player views hide enemy information they are not allowed to know.</li>
+<li>JavaScript interpolates the visible motion, chooses work frames, updates counters and plays appropriate sound.</li>
+</ol>
+<p>A client could alter its local picture, but the server still decides the authoritative outcome. A hidden enemy must stay absent from player data, rather than merely being drawn transparent.</p>
+<h2 id="4-the-important-data-structures">4. The important data structures</h2>
+<table>
+<thead>
+<tr>
+<th>Structure</th>
+<th>Plain-language meaning</th>
+<th>Rule to preserve when editing</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Catalog definition</td>
+<td>A shared recipe: cost, health, range, speed, age, producer and footprint</td>
+<td>Use the same definition for validation and relevant UI; append stable IDs instead of renumbering saved content.</td>
+</tr>
+<tr>
+<td>Entity</td>
+<td>One changing unit/building/resource record: ID, owner, kind, position, health, orders and timers</td>
+<td>An entity is not a private thread, a copied map or a fresh atlas. Reusing a slot must clear old orders, garrison and queue references.</td>
+</tr>
+<tr>
+<td>Player/civilization state</td>
+<td>Economy, age, researched levels and faction multipliers</td>
+<td>A story alone grants nothing; multipliers must be validated and applied by C++. Keep private player economies private.</td>
+</tr>
+<tr>
+<td>Tile grids</td>
+<td>Terrain, occupied cells and visibility per map location</td>
+<td>Render height is not occupied size. Town Center/Fortress = 3×3; ordinary buildings = 2×2; resources/walls = 1×1.</td>
+</tr>
+<tr>
+<td>Spatial buckets</td>
+<td>Nearby entities grouped by location</td>
+<td>Reduce broad collision/search work. Rebuild when required so a moved unit is not checked only in its old bucket. Do not silently drop contacts to fake performance.</td>
+</tr>
+<tr>
+<td>Waypoint pool</td>
+<td>Reusable route nodes shared by mobile units</td>
+<td>At most 16 pending points per unit and 16,384 across the match. Return nodes on cancellation, death and slot reuse. Houses do not each allocate a private route array.</td>
+</tr>
+<tr>
+<td>Production/research state</td>
+<td>Small queues, progress values and technology arrays</td>
+<td>Production is bounded to eight queued entries per building. Research has real payment, age checks and cancellation semantics.</td>
+</tr>
+<tr>
+<td>Visibility and death records</td>
+<td>Team sight, remembered land and short sight grace after a death</td>
+<td>Five-second grace uses simulated time. Spectators and defeated commanders have different permissions. Do not turn “left sight” into a fake death.</td>
+</tr>
+<tr>
+<td>Snapshot baseline/delta</td>
+<td>The last transmitted view and its changes</td>
+<td>Keep entity removal, reset boundaries, fog and revision recovery correct. A smaller packet that loses a death/order is not a valid optimization.</td>
+</tr>
+</tbody>
+</table>
+<p>The current full RTS is bounded to <strong>8,192 entity slots</strong> and maps up to <strong>128×128</strong>. The million-disc crowd benchmark tests a different, simpler workload. Neither the benchmark nor these limits promise a million RTS units or zero RAM consumption. See <a href="https://github.com/fiveft55/codex-rts-gametest/blob/main/docs/ENGINE.md">engine internals</a>, <a href="https://github.com/fiveft55/codex-rts-gametest/blob/main/docs/MONARCH.md">crowd benchmark</a> and <a href="https://github.com/fiveft55/codex-rts-gametest/blob/main/docs/PERFORMANCE.md">performance measurements</a>.</p>
+<h2 id="5-three-clocks-three-different-effects">5. Three clocks; three different effects</h2>
+<table>
+<thead>
+<tr>
+<th>Clock</th>
+<th>Current normal setting</th>
+<th>Changes what?</th>
+<th>Does not change…</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Simulation</td>
+<td>20 fixed ticks per simulated second, 0.05 s each</td>
+<td>Movement, gathering, combat, timers and legal outcomes</td>
+<td>The monitor's refresh rate. Pause and game speed affect simulated time.</td>
+</tr>
+<tr>
+<td>Snapshots</td>
+<td>Players and spectators default to 20 Hz; host tuning 5–60 Hz</td>
+<td>How often state is requested/pushed and the bandwidth/serialization budget</td>
+<td>The number of simulation ticks. More updates are not free CPU/network work.</td>
+</tr>
+<tr>
+<td>Rendering</td>
+<td>60 FPS default; presets through 200, custom 1–1000</td>
+<td>How often the browser draws/interpolates the visible world</td>
+<td>Attack damage, resource creation or server authority. A cap is not a guaranteed achieved frame rate.</td>
+</tr>
+</tbody>
+</table>
+<p>Native full spectators share serialization of a full-map view; defeated commanders receive private team-filtered views. Receive-only means no recurring spectator gameplay polling/ping/telemetry, <strong>not zero TCP acknowledgements or setup traffic</strong>. Waiting lobbies and background polling may use slower schedules. Previously saved explicit tuning remains in force until changed.</p>
+<h3 id="what-multicore-actually-means-here">What “multicore” actually means here</h3>
+<p>The simulation mutates the world on one thread. A bounded worker pool can prepare independent native snapshots while the world is immutable. A barrier finishes those reads before mutation resumes. Worker count is automatic up to four by default, configurable 0–8. A worker does not run its own independent army or map simulation. WebAssembly snapshots run inline; the Web demo does not require SharedArrayBuffer or cross-origin isolation.</p>
+<p>This design avoids copying a complete live world for every viewer. It also keeps a clear synchronization boundary. Turning movement into unsynchronized parallel writes would introduce races rather than automatically make the game faster.</p>
+<h2 id="6-rendering-choices-and-their-structural-impact">6. Rendering choices and their structural impact</h2>
+<ul>
+<li><strong>Shared atlas:</strong> many units reuse generated frames. Owner-color dye protects skin, hair and metal instead of repainting the whole sprite. Unit types use quiet eight-pose idle and sixteen-pose movement/work/attack cycles.</li>
+<li><strong>World-anchored ground chunks:</strong> panning translates cached terrain instead of repainting every map tile. The cache is bounded to 128 padded 258×258 RGBA canvases, about 32.5 MiB of pixel buffers; browser bookkeeping can use additional memory.</li>
+<li><strong>Cropped terrain strip:</strong> ground contexts use only the terrain cells, reducing large texture uploads from the full atlas.</li>
+<li><strong>Fog-aware invalidation:</strong> caches must rebuild when relevant fog, terrain, grid or map settings change. Caching an old clear tile must not reveal a newly hidden area.</li>
+<li><strong>Cached minimap and off-screen rejection:</strong> avoid redrawing static overview terrain or processing visible detail for every off-screen object.</li>
+<li><strong>Local camera:</strong> pan/zoom and debug camera boxes stay client-side. Camera positions are not sent in recurring player state polls. The current main-menu camera matches <code>2fc6e69</code> at 1.7×; its exterior tiles remain opaque fog.</li>
+</ul>
+<p>These reduce repeated work; they do not remove all rendering cost or guarantee 100+ FPS on every processor. <a href="https://github.com/fiveft55/codex-rts-gametest/blob/main/docs/PANNING.md">Measured panning work</a> · <a href="https://github.com/fiveft55/codex-rts-gametest/blob/main/docs/ART.md">art and animation layout</a>.</p>
+<h2 id="7-what-changes-need-a-rebuild">7. What changes need a rebuild?</h2>
+<table>
+<thead>
+<tr>
+<th>Intended change</th>
+<th>Edit</th>
+<th>Immediate structural effect</th>
+<th>Apply it safely</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>New resource layout or player starts</td>
+<td>Map designer / map JSON</td>
+<td>Terrain/object/start data</td>
+<td>Save, validate and configure a new playtest. No C++ rebuild.</td>
+</tr>
+<tr>
+<td>Faction story, allowed data multipliers and starting supplies</td>
+<td>Civilization designer / content JSON</td>
+<td>Validated definition used at match setup</td>
+<td>Save and configure the next match. New behavior outside the format needs code.</td>
+</tr>
+<tr>
+<td>Menu spacing, font or icon</td>
+<td>Browser HTML/CSS/JS</td>
+<td>Presentation only</td>
+<td>Reload the affected page and check narrow screens.</td>
+</tr>
+<tr>
+<td>Walk/attack poses or building appearance</td>
+<td><code>web/art.js</code>, motion/damage code</td>
+<td>Atlas/visual selection, not hit range or footprint</td>
+<td>Regenerate <code>atlas.png</code> when needed, then reload and verify bounds/facing/owner dye.</td>
+</tr>
+<tr>
+<td>Gathering speed, repair cost, unit stats or age rules</td>
+<td>Catalog/world C++</td>
+<td>Actual authoritative game behavior</td>
+<td>Rebuild Windows <strong>and</strong> WebAssembly, refresh Studio runtime templates, run meaningful native/network checks and export again.</td>
+</tr>
+<tr>
+<td>New unit or building class</td>
+<td>Stable kinds, catalog, world, content validation, UI and art</td>
+<td>Extends several coupled systems</td>
+<td>Add all rule/production/pathing/visibility/art hooks; test save compatibility, then rebuild both targets.</td>
+</tr>
+<tr>
+<td>New server role, message or snapshot field</td>
+<td>Application/HTTP/network plus matching client</td>
+<td>Authority, protocol and information exposure</td>
+<td>Test permissions, resets, slow clients and team fog; rebuild affected runtimes and clients together.</td>
+</tr>
+<tr>
+<td>Live rates or IP policy</td>
+<td>Host Console Tuning</td>
+<td>Persisted server policy</td>
+<td>Save; inspect CPU, serialization and network counters. No compiler needed.</td>
+</tr>
+<tr>
+<td>New independent game</td>
+<td>Implement the engine application interface and game module</td>
+<td>New rules isolated from On'Gate: Legacy</td>
+<td>Use Orbit as a small example; rebuild and select the module in Project &amp; export.</td>
+</tr>
+</tbody>
+</table>
+<p>A <strong>source edit</strong> is not a new executable. A <strong>sprite-sheet export</strong> is not a rebuilt simulation. Studio can edit text and validate JS/JSON, but does not include a C++ compiler, breakpoint debugger, campaign trigger graph or universal drag-and-drop game engine.</p>
+<h2 id="8-file-map-and-storage">8. File map and storage</h2>
+<pre><code class="language-text">engine/                  shared HTTP, platform, project, export and diagnostic services
+  application.*          game-module interface and selection
+  main.cpp               native process, clock and request scheduling
+  web_main.cpp           browser/WebAssembly adapter
+  diagnostics.*          process/timing counters and persisted host policy
+  project.*              authorized source operations and backup boundary
+
+games/crownfall/          this RTS's rules, content and session adapter
+  catalog.h              types, prices, research, footprints and capacities
+  world.*                economy, movement, collision, combat, vision and research
+  races.h / content.*    built-in peoples and editable content validation
+  application.cpp        lobby, roles, commands and snapshot envelopes
+
+games/orbit/              smaller independent module proving engine separation
+web/                     menus, Canvas art, audio, input, host console and Studio
+export-templates/        compiled Windows/Web runtimes used by Studio exports
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Stored item</th>
+<th>Location</th>
+<th>Backup advice</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Saved maps and civilizations</td>
+<td>Server/Studio <code>data/content.json</code></td>
+<td>Export JSON and copy the file before upgrading.</td>
+</tr>
+<tr>
+<td>Live host rates and IP policy</td>
+<td><code>data/server-policy.json</code></td>
+<td>Preserve consciously; an old saved rate overrides a new default.</td>
+</tr>
+<tr>
+<td>Source and project text</td>
+<td>Studio's <code>project/</code></td>
+<td>Commit or copy changes before replacing the application.</td>
+</tr>
+<tr>
+<td>Source backups from Studio saves</td>
+<td><code>data/studio-backups/</code></td>
+<td>Bounded history, not a substitute for external backups.</td>
+</tr>
+<tr>
+<td>Keys, camera, audio and graphics preferences</td>
+<td>That browser's local storage</td>
+<td>Export keyboard/camera profiles; other preferences are separate.</td>
+</tr>
+<tr>
+<td>Active session, units and selection</td>
+<td>Live engine/browser state</td>
+<td>Not a persistent saved match. Restarting loses the ongoing battle.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="9-development-and-release-checklist">9. Development and release checklist</h2>
+<ol>
+<li>Identify the smallest layer that owns the change. Keep UI changes out of simulation when the rule is unchanged.</li>
+<li>Take a source/content backup. Inspect the current version and recoverable <a href="https://github.com/fiveft55/codex-rts-gametest/blob/main/docs/PROGRESS.md">milestones</a>.</li>
+<li>For C++ rule/API changes, run <code>make check</code> internally or the documented Windows build/tests. Add a meaningful scenario for new behavior; do not rely only on a disabled UI button.</li>
+<li>For art/layout changes, regenerate relevant assets and inspect the result. For network changes, exercise role/fog authorization, restart/delta recovery and slow/disconnected receivers.</li>
+<li>Rebuild affected Windows/Web runtimes, refresh templates, then export. Test actual extracted packages. A source ZIP passing tests does not prove its bundled executable is current.</li>
+<li>Record the exact source revision in <code>BUILD-INFO.txt</code>, check ZIP integrity/SHA-256 and source/runtime parity, and publish a unique recovery milestone. Windows and Web are supported release targets; do not create new Linux/macOS releases.</li>
+</ol>
+<p>Installation: <a href="https://github.com/fiveft55/codex-rts-gametest/blob/main/docs/INSTALL.md">C++ and general tools</a> · <a href="https://github.com/fiveft55/codex-rts-gametest/blob/main/docs/WINDOWS.md">Visual Studio / Windows</a> · <a href="https://github.com/fiveft55/codex-rts-gametest/blob/main/docs/STUDIO.md">Studio</a> · <a href="https://github.com/fiveft55/codex-rts-gametest/blob/main/docs/EXPORTS.md">exports</a> · <a href="https://github.com/fiveft55/codex-rts-gametest/blob/main/docs/NEW_GAMES.md">new modules</a>.</p>
+<h2 id="10-maintain-these-handbooks">10. Maintain these handbooks</h2>
+<p>The editable sources are <code>docs/field-guide.html</code> and <code>docs/technology.html</code>.
+The screenshots are from a real current playtest; avoid replacing them with
+concept art that implies unimplemented features. SVG diagrams have descriptive
+titles and text, and remain editable vector files.</p>
+<pre><code class="language-sh">python3 scripts/generate-guide-visuals.py
+# Optional documentation tools only:
+python3 -m pip install Markdown playwright
+# Use an installed Chromium, or: python3 -m playwright install chromium
+python3 scripts/capture-guide.py
+python3 scripts/render-guide.py --pdf
+</code></pre>
+<p>The renderer creates offline <code>docs/field-guide.html</code>, <code>docs/technology.html</code> and
+the combined <code>docs/OnGate-Legacy-Handbook.pdf</code>. Recheck relative links, section
+anchors, mobile widths, diagram labels and the PDF after regeneration. Update
+prices/capacities from the catalog and verify workflow labels against the UI.</p>
+<h2 id="11-movement-recovery-state">11. Movement recovery state</h2>
+<p>Each entity now has three floats (stall time and position anchor) plus a walk
+attempt flag. The current GNU x64 build measures 196 bytes per <code>Entity</code> and
+2,784,464 bytes for fixed <code>World</code> storage; process/browser/network memory is
+additional. Recovery uses simulated time, local buckets and a bounded nearby
+search. It repositions the same entity; it does not create/delete a replacement
+or consume population/resources. Waypoint pools and cargo stay intact.</p>
+<p>Victory reveal is authoritative: the world marks playable tiles visible and
+explored for all players after a winner is decided. Full and delta snapshots
+carry that fog transition. Before victory, normal player/team filters apply.</p><footer>Editable sources: FIELD_GUIDE.md and TECHNOLOGY.md. Images and diagrams are included locally. No tracking, external fonts or JavaScript is required to read this handbook.</footer></article></div></body></html>

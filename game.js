@@ -83,6 +83,7 @@ let state = null,
 let token = sessionStorage.getItem("crown-token") || "",
   player = Number(sessionStorage.getItem("crown-player") || 0),
   connected = false;
+let wallDrag = null, gateFacing = 0;
 let shots = [],
   lastMiniDraw = 0;
 let observedPlayer = 0,
@@ -125,6 +126,16 @@ const allied = (a, b) =>
     (state.players[a]?.team > 0 &&
       state.players[a].team === state.players[b]?.team));
 const teamColor = (p) => CrownArt.palettes[colorOf(p)]?.[2] || "#ddd";
+let atlasTheme = "silk-road", atlasWanted = "silk-road", atlasRequest = 0;
+async function applyAtlasTheme(theme) {
+  if (!atlas || theme === atlasWanted) return;
+  atlasWanted=theme; const ticket = ++atlasRequest;
+  if(theme===atlasTheme) return;
+  const image = new Image();
+  image.src = theme === "legacy" ? "./atlas-legacy.png" : "./atlas.png";
+  try {await image.decode(); if (ticket !== atlasRequest) return; atlas=image;atlasTheme=theme;CrownArt.clearCaches();CrownGround.clear();lastUI="";}
+  catch {toast("Could not load the selected baked atlas. Extract all game files.");}
+}
 let atlas,
   placing = -1,
   attackMode = false,
@@ -388,10 +399,6 @@ function order(action, extra = {}) {
       const result = await api("command", { action, ids, ...extra }, "POST");
       CrownPerf.ack(result.commandId, commandStart);
       wakePoll();
-      if (action === "build") {
-        placing = -1;
-        canvas.style.cursor = "default";
-      }
       playTone();
     } catch (e) {
       toast(e.message);
@@ -420,6 +427,7 @@ async function join(mode) {
       "join",
       {
         mode,
+        ...(window.CrownWeb && window.CrownPeer?.active ? {transport:"webrtc"} : {}),
         ...mapSettings(),
         ...($("welcome-color").value !== ""
           ? { color: $("welcome-color").value }
@@ -580,7 +588,7 @@ function applySnapshot(reply) {
       const before = old.get(e.id);
       if (before && e.carry > before.carry && e.owner === player) {
         const resource = nextById.get(e.target);
-        if (resource) CrownSound.gather(resource.kind);
+        if (resource && camera.zoom >= 1.5 && soundNearby(e)) CrownSound.gather(resource.kind);
       }
       if (
         before &&
@@ -590,7 +598,7 @@ function applySnapshot(reply) {
       )
         CrownSound.completed();
       if (before && e.cooldown > before.cooldown + 0.1) {
-        CrownSound.hit();
+        if (camera.zoom >= 1.5 && soundNearby(e)) CrownSound.hit();
         if (e.projectile) {
           const target = CrownMotion.target(e);
           if (
@@ -664,6 +672,7 @@ function applySnapshot(reply) {
   $("map-label").querySelector("h1").textContent =
     window.crownContent?.maps.find((m) => m.id === state.lobby?.mapId)?.name ||
     mapNames[state.mapStyle];
+  $("minimap-title").textContent = $("map-label").querySelector("h1").textContent;
   $("map-size").textContent = `${state.width} × ${state.height}`;
   $("objective").querySelector("p").textContent =
     state.players[player]?.team > 0
@@ -700,7 +709,7 @@ function applySnapshot(reply) {
   updateUI();
 }
 async function poll() {
-  if (!connected || requestInFlight) return;
+  if (!connected || requestInFlight || window.CrownPeer?.observerPush) return;
   requestInFlight = true;
   urgentPoll = false;
   const pollStarted = performance.now(),
@@ -752,6 +761,10 @@ async function poll() {
     poll,
     urgentPoll ? 0 : Math.max(0, interval - (performance.now() - pollStarted)),
   );
+}
+function soundNearby(e) {
+  const p = screen(e.x,e.y);
+  return connected && p.x>=0 && p.x<=viewport.w && p.y>=77 && p.y<viewport.h-viewport.hudHeight;
 }
 function selectedEntities() {
   return state
@@ -866,6 +879,7 @@ function actionButton(
 }
 function updateUI() {
   if (!state) return;
+  applyAtlasTheme(state.lobby?.artTheme || "silk-road");
   const p = state.players[economyPlayer()];
   ["food", "wood", "gold", "stone"].forEach(
     (id, i) => ($(id).textContent = p.resources[i]),
@@ -885,7 +899,7 @@ function updateUI() {
   const ageRequirement =
     p.age === 1
       ? "Complete a Barracks"
-      : "Complete any two: School, Forge, Archery Range";
+      : "Complete any two: School, Blacksmith, Archery Range";
   $("advance").title =
     p.ageReady || p.age >= 3 ? "Advance your kingdom's age" : ageRequirement;
   $("advance").innerHTML = p.advancing
@@ -895,12 +909,13 @@ function updateUI() {
       : `↟ &nbsp; ADVANCE AGE<small>${resourcesText(ageCost)}${p.ageReady ? "" : " · " + ageRequirement}</small>`;
   const es = selectedEntities(),
     e = es[0];
+  renderProductionIcons(e);
   const key =
     [...selected].join(",") +
     "|" +
     (e ? e.kind : -1) +
     "|" +
-    p.age +
+    p.age + ":" + p.ageReady + ":" + p.advancing +
     "|" +
     p.resources.map((n) => Math.floor(n / 5)).join(",") +
     "|" +
@@ -1064,7 +1079,7 @@ function updateUI() {
     return;
   }
   if (isObserver() || e.owner !== player) return;
-  if (actionTab === "commands")
+  if (actionTab === "commands" && (e.kind !== 4 || isUnitKind(e.kind)))
     actionButton(
       "✕",
       isUnitKind(e.kind) ? "Delete units" : "Raze building",
@@ -1108,7 +1123,7 @@ function updateUI() {
   if (isUnitKind(e.kind)) {
     if (hasBuilder && actionTab !== "commands") {
       const choices =
-        actionTab === "economy" ? [5, 10, 16, 15] : [6, 7, 8, 9, 17, 18];
+        actionTab === "economy" ? [4, 5, 10, 16, 15] : [6, 7, 8, 9, 17, 18, 41];
       for (const kind of choices.filter(allowedKind))
         actionButton(
           symbols[kind],
@@ -1169,11 +1184,11 @@ function updateUI() {
       );
   } else if (e.progress >= 1) {
     for (const technology of technologies.filter(
-      (t) => t.building === e.kind && (t.id !== 4 || allowedKind(40)),
+      (t) => t.building === e.kind && (t.id !== 4 || allowedKind(40)) && (t.id !== 5 || allowedKind(20)),
     )) {
       const level = p.technologies?.[technology.id] || 0,
         next =
-          technology.id === 4 && level >= 1 ? null : technology.levels[level],
+          [4, 5].includes(technology.id) && level >= 1 ? null : technology.levels[level],
         busy = p.researching?.[technology.id];
       actionButton(
         technology.id < 2 ? "⚒" : "▤",
@@ -1185,6 +1200,7 @@ function updateUI() {
           e.researchKind >= 0 ||
           e.queue.length > 0 ||
           p.age < next.age ||
+          (technology.id === 5 && !p.technologies?.[4]) ||
           !next.cost.every((n, i) => p.resources[i] >= n),
       );
     }
@@ -1210,6 +1226,25 @@ function updateUI() {
       );
   }
 }
+function renderProductionIcons(building) {
+  const area = $("production-icons");
+  if (!area) return;
+  const stored = building ? state.entities.filter(u=>u.garrison===building.id) : [];
+  const key = building ? JSON.stringify([building.id,building.queue,stored.map(u=>[u.id,u.kind])]) : "";
+  if (area.dataset.key === key) return;
+  area.dataset.key = key; area.replaceChildren();
+  if (!building) return;
+  const icon = (kind, label, cancel) => {
+    const tile=document.createElement("div");tile.className="production-tile";tile.title=label;
+    const image=document.createElement("canvas");image.width=52;image.height=52;
+    CrownArt.icon(image.getContext("2d"),atlas,{...building,kind},52,52);tile.append(image);
+    if(cancel){const button=document.createElement("button");button.textContent="×";button.title="Cancel "+label;button.setAttribute("aria-label","Cancel "+label);button.onclick=cancel;tile.append(button);}
+    else {const mark=document.createElement("small");mark.textContent="IN";tile.append(mark);}
+    area.append(tile);
+  };
+  if (building.owner===player && !isObserver()) building.queue.forEach((kind,index)=>icon(kind,names[kind]+" #"+(index+1),()=>order("canceltrain",{target:building.id,kind:index})));
+  for(const u of stored)icon(u.kind,"Garrisoned "+names[u.kind]);
+}
 function armOrder(action) {
   if (!selectedEntities().some((e) => e.owner === player && isUnitKind(e.kind)))
     return toast("Select your units first.");
@@ -1232,23 +1267,26 @@ function placementCenter(kind, value) {
 function placementValid(kind, wx, wy) {
   if (!state || wx < 0 || wy < 0) return false;
   const n = footprints[kind] || 1,
-    x = placementCenter(kind, wx),
-    y = placementCenter(kind, wy),
-    left = Math.round(x - n / 2),
-    top = Math.round(y - n / 2);
-  if (left < 0 || top < 0 || left + n > state.width || top + n > state.height)
+    width = kind===41 ? (gateFacing%2 ? 1:3) : n,
+    height = kind===41 ? (gateFacing%2 ? 3:1) : n,
+    x = placementCenter(kind, wx), y = placementCenter(kind, wy),
+    left = Math.floor(x-width/2+.001), top = Math.floor(y-height/2+.001);
+  if (left < 0 || top < 0 || left + width > state.width || top + height > state.height)
     return false;
-  for (let ty = top; ty < top + n; ty++)
-    for (let tx = left; tx < left + n; tx++) {
+  for (let ty = top; ty < top + height; ty++)
+    for (let tx = left; tx < left + width; tx++) {
       const cell = ty * state.width + tx;
       if (state.fog[cell] !== "2" || state.terrain[cell] === "1") return false;
       if (
         state.entities.some((e) => {
           if (!isBuildingKind(e.kind) && !isResourceKind(e.kind)) return false;
+          if (kind===41 && e.kind===17 && e.owner===player) return false;
           const m = footprints[e.kind] || 1,
-            ox = Math.round(e.x - m / 2),
-            oy = Math.round(e.y - m / 2);
-          return tx >= ox && tx < ox + m && ty >= oy && ty < oy + m;
+            ew=e.kind===41?(e.facing%2?1:3):m,
+            eh=e.kind===41?(e.facing%2?3:1):m,
+            ox = Math.floor(e.x - ew / 2 + .001),
+            oy = Math.floor(e.y - eh / 2 + .001);
+          return tx >= ox && tx < ox + ew && ty >= oy && ty < oy + eh;
         })
       )
         return false;
@@ -1265,7 +1303,9 @@ function beginBuild(kind) {
   placing = kind;
   attackMode = false;
   canvas.style.cursor = "crosshair";
-  toast(`Place ${names[kind]} on visible open ground. Right-click to cancel.`);
+  toast(kind === 41 ? "Place a three-tile gate; R rotates. May replace your walls." :
+    kind === 17 ? "Drag with the left button; release to build a connected wall. Shift appends jobs." :
+    `Place ${names[kind]} on visible open ground. Shift queues construction. Right-click cancels.`);
 }
 function selectTown() {
   const e = state?.entities.find((e) => e.owner === player && e.kind === 4);
@@ -1379,6 +1419,7 @@ canvas.addEventListener("mousedown", (e) => {
   if (e.button === 2) {
     if (placing >= 0 || attackMode) {
       placing = -1;
+      wallDrag = null;
       attackMode = false;
       canvas.style.cursor = "default";
       return;
@@ -1406,7 +1447,8 @@ canvas.addEventListener("mousedown", (e) => {
     markers.push({
       x: w.x,
       y: w.y,
-      life: 0.8,
+      life: 1.2,
+      label: target && (isResourceKind(target.kind)||target.kind===10) && selectedEntities().some(u=>u.kind===0) ? "GATHER" : "",
       attack: target?.owner >= 0 && !allied(target.owner, player),
     });
     return;
@@ -1414,7 +1456,12 @@ canvas.addEventListener("mousedown", (e) => {
   if (e.button === 0) {
     if (placing >= 0) {
       const w = unproject(e.clientX, e.clientY);
-      order("build", { kind: placing, x: w.x, y: w.y });
+      if (placing === 17) {
+        wallDrag = {x: Math.floor(w.x), y: Math.floor(w.y), shift: e.shiftKey};
+      } else {
+        order(e.shiftKey ? "queue_build" : "build", { kind: placing, x: w.x, y: w.y, facing: gateFacing });
+        if(!e.shiftKey){placing=-1;canvas.style.cursor="default";}
+      }
       return;
     }
     if (attackMode) {
@@ -1460,6 +1507,27 @@ addEventListener("mousemove", (e) => {
 addEventListener("mouseup", (e) => {
   if (e.button === 1) {
     pan = null;
+    return;
+  }
+  if (wallDrag && e.button === 0) {
+    const start = wallDrag, end = unproject(e.clientX, e.clientY);
+    wallDrag = null;
+    if(!start.shift){placing=-1;canvas.style.cursor="default";}
+    const x1 = Math.floor(end.x), y1 = Math.floor(end.y);
+    let x = start.x, y = start.y, dx = Math.abs(x1-x), dy = -Math.abs(y1-y),
+      sx = x < x1 ? 1 : -1, sy = y < y1 ? 1 : -1, error = dx+dy;
+    const limit = Math.min(17, Math.floor(state.players[player].resources[3] / (costs[17]?.[3] || 20)));
+    let placed=0;
+    for (let i = 0; i < limit; ++i) {
+      if(placementValid(17,x+.5,y+.5)){
+        order(start.shift || placed ? "queue_build" : "build", {kind:17, x:x+.5, y:y+.5});
+        ++placed;
+      }
+      if (x === x1 && y === y1) break;
+      const twice = error*2;
+      if (twice >= dy) {error += dy; x += sx;}
+      if (twice <= dx) {error += dx; y += sy;}
+    }
     return;
   }
   if (!drag || e.button !== 0) return;
@@ -1530,6 +1598,10 @@ canvas.addEventListener(
 );
 addEventListener("keydown", (e) => {
   if ($("escape-menu").open || $("delete-confirm").open) return;
+  if (placing === 41 && e.code === "KeyR") {
+    e.preventDefault(); gateFacing = (gateFacing+1)%4;
+    toast("Gate direction: " + ["East","South","West","North"][gateFacing]); return;
+  }
   if (
     CrownControls.isOpen ||
     $("mod-workshop").open ||
@@ -1909,7 +1981,7 @@ function requestDelete() {
   if (!connected || isObserver()) return;
   const owned = selectedEntities().filter((e) => e.owner === player);
   const units = owned.filter((e) => isUnitKind(e.kind)),
-    buildings = owned.filter((e) => isBuildingKind(e.kind));
+    buildings = owned.filter((e) => isBuildingKind(e.kind) && e.kind !== 4);
   if (units.length) order("delete", { ids: units.map((e) => e.id).join(" ") });
   if (!buildings.length) return;
   keys.clear();
@@ -1918,7 +1990,7 @@ function requestDelete() {
   $("delete-title").textContent =
     `Raze ${buildings.length === 1 ? names[buildings[0].kind] : buildings.length + " buildings"}?`;
   $("delete-warning").textContent =
-    "This destroys your selected buildings. Stored units will deploy if possible. Razing your final Town Center defeats your kingdom.";
+    "This destroys your selected buildings. Stored units will deploy if possible. Unfinished foundations return 50% of their construction cost. Town Centers cannot be razed.";
   $("delete-stage").textContent = "Confirmation 1 of 2";
   $("confirm-delete").textContent = "CONTINUE TO FINAL CONFIRMATION";
   $("confirm-delete").disabled = false;
@@ -1958,7 +2030,7 @@ function openEscapeMenu() {
   $("surrender-confirm").classList.add("hidden");
   $("escape-title").textContent = connected ? "Game menu" : "Settings";
   $("menu-match-info").textContent =
-    `Crownfall ${state?.version || ""} · ${state?.mode || "Main menu"}`;
+    `On\u0027Gate: Legacy ${state?.version || ""} · ${state?.mode || "Main menu"}`;
   $("menu-audio").checked = CrownSound.enabled;
   for (const [id, key] of [
     ["master-volume", "master"],
@@ -2269,7 +2341,14 @@ function frame(now) {
           placementCenter(placing, w.y),
         ),
         valid = placementValid(placing, w.x, w.y);
-      diamond(
+      if(placing===41){
+        const fw=gateFacing%2?1:3, fh=gateFacing%2?3:1;
+        ctx.beginPath();
+        [[-fw/2,-fh/2],[fw/2,-fh/2],[fw/2,fh/2],[-fw/2,fh/2]].forEach(([dx,dy],i)=>{
+          const q=screen(placementCenter(placing,w.x)+dx,placementCenter(placing,w.y)+dy);
+          if(i)ctx.lineTo(q.x,q.y);else ctx.moveTo(q.x,q.y);
+        });ctx.closePath();ctx.fillStyle=valid?"#bddb9b44":"#dc725b55";ctx.strokeStyle=valid?"#d1e4ae":"#e99777";ctx.fill();ctx.stroke();
+      }else diamond(
         p.x,
         p.y,
         (footprints[placing] || 1) * 32 * z,
@@ -2282,6 +2361,7 @@ function frame(now) {
         atlas,
         {
           kind: placing,
+          facing: gateFacing,
           owner: player,
           id: 0,
           age: state.players[player].age,
@@ -2323,6 +2403,13 @@ function frame(now) {
         Math.PI * 2,
       );
       ctx.stroke();
+    }
+    for (const m of markers) if (m.label) {
+      const p=screen(m.x,m.y);ctx.save();ctx.globalAlpha=Math.min(1,m.life*2);
+      ctx.font="bold 18px sans-serif";ctx.textAlign="center";ctx.lineWidth=4;
+      ctx.strokeStyle="#142a20";ctx.fillStyle="#ffe6a0";
+      ctx.strokeText(m.label,p.x,p.y-55*z-(1.2-m.life)*18);
+      ctx.fillText(m.label,p.x,p.y-55*z-(1.2-m.life)*18);ctx.restore();
     }
     markers = markers.filter((m) => m.life > 0);
     for (const effect of effects) {
@@ -2476,17 +2563,26 @@ function updateLobby() {
     lobby.seed,
     lobby.capacity,
     lobby.mapId,
+    lobby.artTheme,
     player,
   ].join(",");
   if (configKey !== lobbyUIKey) {
     lobbyUIKey = configKey;
     $("lobby-width").value = lobby.width;
     $("lobby-height").value = lobby.height;
+    $("lobby-art-theme").value = lobby.artTheme || "silk-road";
+    $("lobby-size").value =
+      lobby.width === lobby.height && [64, 80, 96, 112, 128].includes(lobby.width)
+        ? String(lobby.width)
+        : "custom";
+    $("lobby-custom-dimensions").classList.toggle("hidden", $("lobby-size").value !== "custom");
     $("lobby-map").value = lobby.mapId ? "custom:" + lobby.mapId : lobby.style;
     $("lobby-seed").value = lobby.seed;
     $("lobby-capacity").value = lobby.capacity;
   }
   for (const id of [
+    "lobby-size",
+    "lobby-art-theme",
     "lobby-width",
     "lobby-height",
     "lobby-map",
@@ -2614,8 +2710,14 @@ $("map-preset").onchange = () =>
 $("add-ai").onclick = () => lobbyAction("add_ai");
 $("ready").onclick = () => lobbyAction("ready");
 $("start-match").onclick = () => lobbyAction("start");
+$("lobby-size").onchange = () => {
+  const size = $("lobby-size").value;
+  $("lobby-custom-dimensions").classList.toggle("hidden", size !== "custom");
+  if (size !== "custom") $("lobby-width").value = $("lobby-height").value = size;
+};
 $("apply-map").onclick = () =>
   lobbyAction("configure", {
+    artTheme: $("lobby-art-theme").value,
     width: $("lobby-width").value,
     height: $("lobby-height").value,
     style: $("lobby-map").value.startsWith("custom:")
@@ -2753,7 +2855,8 @@ async function init() {
   try {
     await atlas.decode();
   } catch {
-    atlas = CrownArt.generate();
+    $("welcome-error").textContent = "The baked atlas could not load. Extract the whole package and reload.";
+    return;
   }
   focus(16, 35);
   camera.zoom = 1;
@@ -2805,7 +2908,7 @@ async function init() {
     if (!token) focusMenuSettlement();
     $("release-version").textContent = $("menu-version").textContent =
       state.version;
-    document.title = `Crownfall ${state.version} — Monarch`;
+    document.title = `On\u0027Gate: Legacy ${state.version} — SilkRoad`;
   } catch (e) {
     toast(e.message);
   }
@@ -2831,17 +2934,14 @@ if (window.CrownWeb) {
   document.querySelectorAll(".native-only").forEach((e) => (e.hidden = true));
   document.querySelector(".menu-section-title").textContent = "PLAY · WEB DEMO";
   for (const id of [
-    "host",
-    "join",
-    "watch",
     "welcome-console",
     "join-address-field",
   ])
     $(id).hidden = true;
-  document.querySelector(".lan-buttons").hidden = true;
+  document.querySelector(".lan-buttons").hidden = false;
   document.querySelector(".menu-connection").hidden = true;
   document.querySelector(".welcome-foot span").textContent =
-    "WEB DEMO · LOCAL SOLO & AI LOBBIES · Windows for LAN";
+    "WEB · LOCAL AI OR DIRECT BROWSER ROOMS";
   $("server-address").textContent = "Local browser simulation";
 }
 
@@ -2863,6 +2963,7 @@ async function refreshMainMenu() {
 }
 function returnToMainMenu(message = "") {
   connected = false;
+  window.CrownPeer?.close();
   token = "";
   player = 0;
   keys.clear();

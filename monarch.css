@@ -1340,3 +1340,28 @@ h3,
   #selection-content { gap: 0; }
   #command-deck .minimap-wrap .panel-heading > span:first-child { display: none; }
 }
+
+/* SilkRoad: readable action labels and compact queue portraits. */
+#production-icons{display:flex;gap:6px;overflow-x:auto;min-height:0}
+.production-tile{position:relative;flex:0 0 52px;height:52px;background:#263b2d;border:1px solid #b8a473}
+.production-tile canvas{width:52px;height:52px;image-rendering:pixelated}
+.production-tile button{position:absolute;right:0;top:0;width:20px;height:20px;min-width:0;min-height:0;padding:0;background:#702f26;color:#fff0cc;font-size:18px;line-height:18px}
+.production-tile small{position:absolute;bottom:0;right:2px;font-size:10px;color:#f4db96}
+#actions button{font-size:13px}#unit-detail,#queue{font-size:12px}#lobby button,#lobby select{font-size:14px}
+
+#minimap-title{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+#production-icons{flex-shrink:0;max-height:40px}.production-tile{flex-basis:38px;height:38px}.production-tile canvas{width:38px;height:38px}
+
+/* Browser rooms follow the native council's compact square controls. */
+#peer-dialog { width:min(760px,92vw); max-height:90vh; overflow:auto; background:#17291f; color:#f2e4bc; border:2px solid #ad9462; padding:22px; }
+#peer-dialog::backdrop { background:#07140cbb; }
+#peer-dialog header { display:flex; align-items:center; justify-content:space-between; gap:16px; }
+#peer-dialog h2 { margin:0; }
+#peer-dialog textarea { box-sizing:border-box; width:100%; resize:vertical; font:12px monospace; min-height:64px; }
+#peer-dialog label { display:block; margin:12px 0 5px; }
+#peer-status { min-height:2em; color:#e6ce8a; }
+.peer-row { display:flex; justify-content:space-between; align-items:center; gap:12px; margin:8px 0; }
+
+/* Longer public name keeps the established single-line logo/version layout. */
+.menu-brand { font-size:clamp(12px,1.5vw,20px); letter-spacing:.2px; gap:8px; }
+.wordmark > span { font-size:13px; letter-spacing:.2px; white-space:nowrap; }
