@@ -2,11 +2,20 @@
 
 Choose **Solo AI Difficulty** on the welcome screen before **Play Solo**. Normal is the default. Your last choice is remembered in this browser. The active match's difficulty appears in the council/game information and survives reloads and match restarts.
 
-For several opponents, choose **Solo & local AI games → War Council · Multiple AI**. This opens a local lobby with you and one computer, without requiring a LAN host or other players. Raise kingdom seats above the default two and click **Add AI Kingdom** for more, then set each computer’s difficulty, civilization and team in its row. Ready yourself and click **Start Match**. The gear button returns you to this lobby after a match starts.
+For several opponents, choose **Skirmish Lobby**. This opens a local lobby with you and one computer, without requiring a LAN host or other players. Raise kingdom seats above the default two and click **Add AI Kingdom** for more, then set each computer’s difficulty, civilization and team in its row. Ready yourself and click **Start Match**. The gear button returns you to this lobby after a match starts.
 
 For co-op, choose **Host & Play** and have friends join as players. The playing host adds AI kingdoms to the same lobby. Give the friends one team number and the AI another. Use **No team** for free-for-all opponents. You can also add an AI teammate or create several competing teams. Identical nonzero team numbers share current vision, explored terrain and victory; they cannot damage each other. Units, production queues and resources still belong to individual kingdoms.
 
 Human and AI kingdoms share the sixteen kingdom seats: examples include one human plus nine computers, or two friends plus eight computers. LAN has four additional spectators and can use a dedicated operator instead of a playing host. Empty seats remain empty. Computers are always ready; every human must ready up. Changes to the roster, map, civilization, AI level or team clear human readiness. Start requires at least two opposing kingdoms; teams are locked while playing. Returning to the lobby and restarting preserve the AI roster and its settings.
+
+## Scout before planning a march
+
+Every difficulty must discover an enemy Town Center through real team vision
+before choosing it as a raid destination. One scout explores unexplored frontiers;
+without a discovered base, the army stays home while exploration continues. The
+AI remembers last-seen coordinates, and cannot track an unseen base that moves or
+is destroyed. It must revisit an empty site before discarding that memory.
+Gatherers also choose explored deposits. [Detailed rules and diagram](AI-SCOUTING.md).
 
 ## What changes
 
@@ -23,7 +32,7 @@ Human and AI kingdoms share the sixteen kingdom seats: examples include one huma
 | Archery range goal | 1 | 1 | 1 | 2 |
 | Farm goal | 3 | 5 | 8 | 10 |
 
-Times use simulated game time; changing game speed changes their real-world duration. A raid also requires enough surviving soldiers. Economy, losses, terrain, and resources can delay it. An army goal includes units already paid for in production queues.
+Times use simulated game time; changing game speed changes their real-world duration. A raid also requires a discovered enemy base and enough surviving soldiers. Economy, losses, terrain, and resources can delay it. An army goal includes units already paid for in production queues.
 
 Easy builds a smaller force and gives you a longer opening. Normal is balanced. Hard and Expert reserve resources for a small opening attack before building their full workforce, then seek larger follow-up waves. They also prioritize age advancement sooner and use more production buildings. A reserved research budget pauses new recruitment until the age cost can be paid.
 

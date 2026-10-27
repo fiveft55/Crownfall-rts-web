@@ -3,7 +3,12 @@
   "generator": "web/art.js",
   "layout": {
     "width": 4096,
-    "height": 9536,
+    "height": 9920,
+    "gateAnimations": {
+      "directions": 4,
+      "frames": 9,
+      "baseY": 9536
+    },
     "unitSize": 64,
     "unitSourceHeight": 48,
     "unitPoseCount": 8696
@@ -11,13 +16,14 @@
   "themes": {
     "silk-road": {
       "image": "atlas.png",
-      "sha256": "03d707392e7cc3583a707951da24c7a2564512e697968d3dbd2da48118accbe4",
-      "bytes": 8901420
+      "sha256": "40716a07d21b35ca24b806cb072d5c6a9cc522f4bc42c9147241c1f4171a826b",
+      "bytes": 6314879
     },
     "legacy": {
       "image": "atlas-legacy.png",
-      "sha256": "816019980b9c0f92970953383c381faf55a52529cbef045d1e1112e92ff91cbd",
-      "bytes": 8952773
+      "sha256": "c491ec5af3add7dc2c92f52795fb9cd24325d407fa26a5adb2306fc13b9275f0",
+      "bytes": 6343722
     }
-  }
+  },
+  "bakeMode": "gates-only / preserve unrelated pixels"
 }

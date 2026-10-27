@@ -1122,20 +1122,32 @@
     }
   }
   // Generated once into PNG. Runtime only selects an atlas frame.
-  function raceBuilding(kind, race, age, facing = 0) {
+  function raceBuilding(kind, race, age, facing = 0, lift = 0) {
     if (kind === 41) {
       const alongY = facing % 2;
       const ends = alongY ? [[96,76],[32,108]] : [[32,76],[96,108]];
       for (const [x,y] of ends) block(x,y,11,7,56,"#919786");
       poly([[ends[0][0]-6,ends[0][1]-54],[ends[1][0]-6,ends[1][1]-54],
         [ends[1][0]+6,ends[1][1]-45],[ends[0][0]+6,ends[0][1]-45]],"#716449");
-      for (let t=.2;t<.9;t+=.2) {
+      // An iron portcullis rises into the lintel; stone piers never move.
+      for (let t=.15;t<.95;t+=.14) {
         const x=ends[0][0]+(ends[1][0]-ends[0][0])*t,
-          y=ends[0][1]+(ends[1][1]-ends[0][1])*t;
-        line(x,y-48,x,y-8,"#594e3d",3);
+          y=ends[0][1]+(ends[1][1]-ends[0][1])*t,
+          bottom=y-7-lift*40;
+        if(bottom>y-48){
+          line(x,y-48,x,bottom,"#303a3e",3);
+          line(x-1,y-47,x-1,bottom-1,"#9ba7a5",1);
+          poly([[x-2,bottom-1],[x+2,bottom-1],[x,bottom+4]],"#444e51",null);
+        }
       }
-      line(ends[0][0],ends[0][1]-28,ends[1][0],ends[1][1]-28,"#383e34",3);
-      if (facing>=2) line(ends[0][0],ends[0][1]-8,ends[1][0],ends[1][1]-48,"#c1a76c",2);
+      for(const height of [18,33]) {
+        const top=height+lift*40;
+        if(top<48)line(ends[0][0]+6,ends[0][1]-top,ends[1][0]-6,ends[1][1]-top,"#697677",3);
+      }
+      for(const [x,y] of ends){
+        line(x+2,y-52,x+2,y-11,"#393f3c",1);
+        for(let k=0;k<6;k++)rect(x+1,y-48+k*6-(Math.round(lift*40)%6),2,2,"#b1b6a2");
+      }
       return;
     }
     if (kind === 17) {
@@ -1821,7 +1833,7 @@
     const canvas = document.createElement("canvas");
     canvas.width = CELL * COLS;
     canvas.height =
-      UNIT_BASE_Y + Math.ceil(unitPoseCount / UNIT_COLUMNS) * UNIT_SIZE;
+      UNIT_BASE_Y + Math.ceil(unitPoseCount / UNIT_COLUMNS) * UNIT_SIZE + 2 * BUILDING_HEIGHT;
     ctx = canvas.getContext("2d", { willReadFrequently: true });
     ctx.imageSmoothingEnabled = false;
     function at(index, fn) {
@@ -1980,6 +1992,14 @@
             ctx.putImageData(im, f.x, f.y);
           }
         }
+    // Append Gate animation cells, preserving every previous atlas coordinate.
+    const gateSourceY=UNIT_BASE_Y+Math.ceil(unitPoseCount/UNIT_COLUMNS)*UNIT_SIZE;
+    for(let facing=0;facing<4;facing++)for(let pose=0;pose<9;pose++){
+      const index=facing*9+pose;
+      ctx.save();ctx.translate((index%BUILDING_COLUMNS)*BUILDING_SIZE,gateSourceY+Math.floor(index/BUILDING_COLUMNS)*BUILDING_HEIGHT);
+      ctx.beginPath();ctx.rect(0,0,BUILDING_SIZE,BUILDING_HEIGHT);ctx.clip();ctx.translate(0,60);
+      raceBuilding(41,0,3,facing,pose/8);ctx.restore();
+    }
     // Ordered dithering: independently quantize red/green/blue using a 4×4 Bayer matrix.
     // This deliberately introduces structured pixel texture instead of blurred gradients.
     const bayer = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5],
@@ -2006,7 +2026,7 @@
     const packed = document.createElement("canvas");
     packed.width = canvas.width;
     packed.height =
-      UNIT_BASE_Y + Math.ceil(unitPoseCount / UNIT_COLUMNS) * UNIT_ROW_HEIGHT;
+      UNIT_BASE_Y + Math.ceil(unitPoseCount / UNIT_COLUMNS) * UNIT_ROW_HEIGHT + 2 * BUILDING_HEIGHT;
     const pc = packed.getContext("2d");
     pc.imageSmoothingEnabled = false;
     pc.drawImage(
@@ -2032,6 +2052,8 @@
         canvas.width,
         UNIT_ROW_HEIGHT,
       );
+    pc.drawImage(canvas,0,gateSourceY,canvas.width,2*BUILDING_HEIGHT,0,
+      UNIT_BASE_Y+Math.ceil(unitPoseCount/UNIT_COLUMNS)*UNIT_ROW_HEIGHT,canvas.width,2*BUILDING_HEIGHT);
     return packed;
   }
   // Bounded shared frame cache (1024 × 64 × 48 RGBA = 12 MiB), never per-entity art.
@@ -2221,7 +2243,8 @@
     layout: {
       width: CELL * COLS,
       height:
-        UNIT_BASE_Y + Math.ceil(unitPoseCount / UNIT_COLUMNS) * UNIT_ROW_HEIGHT,
+        UNIT_BASE_Y + Math.ceil(unitPoseCount / UNIT_COLUMNS) * UNIT_ROW_HEIGHT + 2 * BUILDING_HEIGHT,
+      gateAnimations: {directions:4,frames:9,baseY:UNIT_BASE_Y+Math.ceil(unitPoseCount/UNIT_COLUMNS)*UNIT_ROW_HEIGHT},
       unitSize: UNIT_SIZE,
       unitSourceHeight: UNIT_ROW_HEIGHT,
       unitPoseCount,
@@ -2249,6 +2272,13 @@
       };
     },
     buildingFrame(entity) {
+      if(entity.kind===41){
+        const lift=window.CrownMotion?.gateLift?.(entity.id)||0,
+          index=(entity.facing||0)*9+Math.round(Math.max(0,Math.min(1,lift))*8);
+        return {x:(index%BUILDING_COLUMNS)*BUILDING_SIZE,
+          y:UNIT_BASE_Y+Math.ceil(unitPoseCount/UNIT_COLUMNS)*UNIT_ROW_HEIGHT+Math.floor(index/BUILDING_COLUMNS)*BUILDING_HEIGHT,
+          size:BUILDING_SIZE,height:BUILDING_HEIGHT,anchorX:64,anchorY:160};
+      }
       const slot = buildingKinds.indexOf(entity.kind) + (entity.kind===41 ? (entity.facing||0) : 0),
         age = Math.max(1, Math.min(3, entity.age || 1)),
         race = Math.max(0, Math.min(9, entity.race || 0));

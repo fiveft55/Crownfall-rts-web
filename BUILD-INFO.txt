@@ -1,6 +1,8 @@
-On'Gate: Legacy 0.6.SilkRoad WebAssembly build
-Source revision: 1900f9d978e8712fa8f510a359b6e2e342d83826
-Compiler: Emscripten 3.1.69 / LLVM 19
-Target: WebAssembly / static browser
-C++ standard: 17
-Wasm SHA-256: 89060fe77914c38e842d678764a6d62cad04890cd17e729dcda99b54d6b07f64
+On'Gate: Legacy 0.6.SilkRoad — WebAssembly release
+Source revision: e6b26188dae3f81c346c3e90d66d9e4857e04241
+engine.wasm SHA256: ad771a733e182a77c2039fbbfaa0d269e59b355ef64b97f5636446f8da298e97
+Shared C++ simulation; static HTTP(S) hosting; no native Steam SDK in a browser.
+
+Presentation source revision: fecc5f6c331f57e0568ff55ce6a0d632d0f2a9d2
+Gate update: Ctrl+wheel first-tile pivot / three-cell footprint / baked allied portcullis animation.
+Gather feedback: smaller, muted labels. Native/Wasm runtime bytes unchanged.

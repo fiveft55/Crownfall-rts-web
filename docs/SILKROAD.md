@@ -10,7 +10,7 @@ Web share gameplay source. This guide takes precedence over older Monarch notes.
 |---|---|
 | Advance ages | Click **Advance** after meeting the completed-building requirements. Selection is irrelevant. Dark → Feudal needs a Barracks; Castle needs two distinct types among School, Blacksmith and Archery Range. |
 | School | Build from Feudal Age. Its first research levels are Feudal, second levels Castle. |
-| Infantry upgrades | Research Militia Drill in a Feudal Barracks, then **Swordsmanship** in Castle (150 food, 100 gold, 30 simulated seconds). Applicable existing infantry and future recruits upgrade. No Feudal Swordsmen. |
+| Infantry upgrades | Research Militia Drill in a Feudal Barracks. Standard Swordsmen train directly in Castle Age; Swordsmanship research is retired. Existing Militia are not automatically converted. No Feudal standard Swordsmen. |
 | Additional Town Centers | Castle villagers can build them. Each adds ten population support. Losing one does not defeat you if another survives. Town Centers cannot be razed, including foundations. |
 | Wall line | Select villagers, choose Wall, hold the left mouse button and drag, then release. A stroke places up to 17 affordable segments. Obstructed cells are skipped. Repeat for longer lines. |
 | Gate | Choose Gate, press **R** to cycle East/South/West/North, then place. It occupies exactly three cells, horizontally or vertically. It can replace your walls, never enemy walls. Completed gates admit allies and block enemies. There is no manual lock toggle. |
@@ -108,3 +108,19 @@ Regenerate both PNGs with `python3 scripts/generate_atlas.py`; rebuild C++ Windo
 WebAssembly for rule changes, refresh Studio templates, then export. See
 [installation](INSTALL.md), [engine workflow](STUDIO.md), [exports](EXPORTS.md) and
 [recovery milestones](PROGRESS.md). Keep old milestone tags and back up custom data.
+
+Current AI commanders must scout bases before marching to them; see [AI scouting and memory](AI-SCOUTING.md).
+
+### Gate placement pivot
+
+Hover the first tile of the Gate. Ctrl + mouse-wheel steps rotate clockwise or
+counterclockwise around that tile; R also rotates clockwise. Each orientation
+occupies exactly three contiguous tiles (3×1 or1×3). A gold dot marks the fixed
+first tile. While placing a Gate, Ctrl + scrolling rotates instead of zooming the camera; plain scrolling still zooms.
+The preview, collision validation and submitted native center share that footprint.
+Android has a ↻ Gate touch button. Completed Gates are not rotated in place.
+
+Completed Gates now raise/lower an iron portcullis for nearby own/allied units
+using nine baked poses per direction. Enemies do not trigger it, units inside
+keep it open, and pause freezes it. Allied passage and enemy collision rules
+remain authoritative. The Gate-only bake preserves all unrelated sprite pixels.

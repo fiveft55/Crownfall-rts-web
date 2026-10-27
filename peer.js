@@ -121,7 +121,7 @@
       }catch(e){status(e.message);disconnect(peer);}
     };
     channel.onopen=async()=>{
-      peer.open=true;renderPeers();status("Connected. The hosting tab must remain open.");
+      clearTimeout(peer.connectTimer);peer.open=true;renderPeers();status("Connected. The hosting tab must remain open.");
       if(role==="client"){
         upstream=peer;$("peer-dialog").close();
         try {
@@ -137,7 +137,7 @@
   }
   function disconnect(peer){
     if(peer.closed)return;peer.closed=true;
-    clearTimeout(peer.pushTimer);peer.pushing=false;
+    clearTimeout(peer.connectTimer);clearTimeout(peer.pushTimer);peer.pushing=false;
     const session=peer.session;peer.session="";peer.fragments.clear();
     peer.channel?.close();peer.pc.close();peers.delete(peer.id);renderPeers();
     if(role==="host"&&session)localFetch("/api/leave",{method:"POST",headers:{"X-Session":session}}).catch(()=>{});
@@ -147,7 +147,7 @@
     if(!window.RTCPeerConnection||!window.isSecureContext)throw Error("Browser rooms require HTTPS or localhost and WebRTC support");
     if(peers.size>=20)throw Error("The room connection limit is reached");
     const peer={id,pc:new RTCPeerConnection({iceServers:iceServers()}),fragments:new Map(),requests:0,rateStart:performance.now(),rateCount:0,session:"",seat:-1,inflight:0,open:false,closed:false,created:performance.now()};
-    peers.set(id,peer);peer.pc.onconnectionstatechange=()=>{if(["failed","closed"].includes(peer.pc.connectionState))disconnect(peer);};
+    peers.set(id,peer);peer.pc.onconnectionstatechange=()=>{if(peer.pc.connectionState==="failed"){status("Connection failed. STUN cannot relay traffic. Configure a TURN relay on both devices, or use the same LAN, then exchange a fresh invitation and answer.");disconnect(peer);}else if(peer.pc.connectionState==="closed")disconnect(peer);};
     return peer;
   }
   function renderPeers(){
@@ -186,7 +186,15 @@
   async function accept(value){
     const answer=decode(value),peer=peers.get(answer.peer);
     if(role!=="host"||!peer||answer.description.type!=="answer"||peer.pc.signalingState!=="have-local-offer")throw Error("No waiting invitation matches this answer");
-    await peer.pc.setRemoteDescription(answer.description);status("Connecting directly…");
+    await peer.pc.setRemoteDescription(answer.description);
+    if(!peer.open){
+      status("Connecting… Allow up to 45 seconds. STUN alone cannot connect every network.");
+      peer.connectTimer=setTimeout(()=>{
+        if(peer.open||peer.closed)return;
+        status("Connection timed out. No playable route was established. Configure TURN on both devices (Google STUN is not TURN), or try the same LAN. Create a fresh invitation after changing ICE settings.");
+        disconnect(peer);
+      },45000);
+    }
   }
   function remoteFetch(input,options={}){
     const url=new URL(typeof input==="string"?input:input.url,location.href);
@@ -211,7 +219,7 @@
   $("peer-accept-answer").onclick=action(()=>accept($("peer-host-answer").value));
   $("peer-create-answer").onclick=action(()=>answer($("peer-join-code").value,$("peer-seat").value));
   for(const id of ["peer-host-code","peer-answer-code"])$(id+"-copy").onclick=action(async()=>{if(!$(id).value)throw Error("Generate a code first");await navigator.clipboard.writeText($(id).value);status("Copied. Share it privately with your friend.");});
-  setInterval(()=>{for(const peer of [...peers.values()]){for(const [id,item]of peer.fragments)if(performance.now()-item.time>10000)peer.fragments.delete(id);if(!peer.open&&performance.now()-peer.created>300000)disconnect(peer);}},2000);
+  setInterval(()=>{for(const peer of [...peers.values()]){for(const [id,item]of peer.fragments)if(performance.now()-item.time>10000)peer.fragments.delete(id);if(!peer.open&&performance.now()-peer.created>300000){status("Invitation expired without a connection. Create a fresh invitation; if direct connections fail, configure TURN on both devices.");disconnect(peer);}}},2000);
   window.CrownPeer={offer,answer,accept,open,debug(){return [...peers.values()].map(p=>({state:p.pc.connectionState,ice:p.pc.iceConnectionState,signal:p.pc.signalingState,open:p.open,seat:p.seat,inflight:p.inflight,fragments:p.fragments.size,requests:p.requests,pushing:!!p.pushing}));},get observerPush(){return observerPush;},get role(){return role;},get active(){return role!=="local";},get connectedPeers(){return [...peers.values()].filter(p=>p.open).length;},close(){const old=role;role="local";observerPush=false;for(const peer of [...peers.values()])disconnect(peer);upstream=null;for(const task of pending.values()){clearTimeout(task.timer);task.reject(Error("Peer session closed"));}pending.clear();return old;}};
   $("peer-invite").hidden=false;
   $("host").textContent="HOST BROWSER ROOM";$("join").textContent="JOIN BROWSER ROOM";

@@ -1203,7 +1203,7 @@ h3,
   display: none;
 }
 #game-hints {
-  bottom: calc(var(--command-height) + 12px);
+  bottom: calc(var(--command-height) + 54px);
 }
 @media (max-width: 1250px) {
   #command-deck #chronicle {

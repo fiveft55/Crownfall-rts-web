@@ -4,6 +4,79 @@ This is the persistent project timeline for the owner and future Codex sessions.
 The Git history is the authoritative source. Milestone tags are permanent names;
 they are never moved to a newer build. Dates below are Git commit dates in UTC.
 
+## Desktop Steam480, portable and scouting AI · 27 October 2026 (Australia/Sydney)
+
+This update adds four gold pan arrows in the shared Windows-x64/Web/
+Electron UI; the green frame is removed and arrow clicks do not command units.
+Swordsmanship research is removed; standard Castle Swordsmen train directly.
+The install-folder chooser and owned-file uninstaller support custom destinations.
+A separate portable ZIP prepares Electron once and keeps a local user-data folder.
+Studio/editable source exports include the Electron frontend and SDK bridge sources.
+
+Electron's Alt Steam480 menu uses the supplied private SDK1.65 through a bounded
+native P2P sidecar and an allowlisted HTTP/SSE adapter. It binds each Steam peer to
+its issued game token; admin/Studio access is blocked. [Friend testing guide](STEAM480-DESKTOP.md).
+No live Steam authentication/relay/overlay test is claimed. The native Win32 and
+Godot Windows frontends are no longer updated, as requested; historical ZIPs stay.
+
+[AI exploration and memory](AI-SCOUTING.md): one scout discovers frontiers; a base
+must enter legitimate team sight before the AI can plan a raid. Hidden relocation
+or destruction does not update its last-seen memory. Revisited empty sites clear
+memory. Gatherers use explored deposits. New scenarios verify target independence
+from hidden base locations and memory behavior. All difficulties use the same fog.
+
+## Classic UI desktop app · 27 October 2026 (Australia/Sydney)
+
+Recovery tag: `milestone/electron-classic-ui`. Desktop source: `2fd1a87`.
+
+The owner prioritized an exact match to the ongoing Windows-x64/web UI and
+requested Electron when not using Tauri. `OnGateDesktop.exe` now embeds the shared
+UI in sandboxed Chromium, owns its hidden native server through a C++ Job Object
+process owner, and opens host/spectator popups
+as app windows with normal browser session semantics. No duplicated UI/rules.
+New download: `downloads/windows-exe/OnGate-Legacy-Desktop-Windows-x64.zip`.
+[Setup and architecture](DESKTOP-CLASSIC.md). Packaging checks every UI file against
+both the Windows-x64 ZIP and current source, and records SHA256 per file. Existing
+Godot/Win32/Android releases remain independent; Steam480 stays Godot-only.
+
+Cross-compilation, native imports, archive parity and shared browser controls
+are checked. Real Electron/Linux GUI tests exercise the desktop lifecycle, host console session
+and command order, including an independently issued spectator seat. Windows CI adds installed-process cleanup and an Electron UI
+smoke test. Physical Windows/high-DPI/GPU/fullscreen/device-LAN testing remains
+pending unless a later entry records it. The per-user NSIS installer downloads and verifies Electron45.0.0 during setup,
+then works offline. The optional fully offline package exceeds the Git100MiB limit.
+This is Electron, not Tauri or WebView2.
+
+## Godot, Android and Steam480 development build
+
+Source project: `godot/`; controls/platform guide: [GODOT.md](GODOT.md).
+Collect is first and Delete last; an inset see-through pan frame replaces physical
+screen-edge scrolling. Decorative building flags are removed; order markers stay.
+Godot Windows and Android ARM64 share the C++ simulation through GDExtension.
+Android combines client/foreground host. Real two-process LAN tests cover seats,
+readiness/start, remote commands and private fog; signed APK/native-library checks
+cover packaging. Shared native rules passed66 scenarios after removing a2.7MiB
+reset stack temporary for Android. Godot HUD/tool/audio parity is incomplete.
+
+The owner supplied SDK1.65 and authorized development App480. Windows SDK-backed
+friends-only lobbies and bounded P2P/relay transport compile. Live Steam account,
+relay/overlay behavior, Windows GPU and Android device testing are not verified.
+Use manual lobby IDs while validating friend invites. SDK remains private.
+
+## First fully native Windows frontend
+
+The owner chose native Windows graphics/UI, explicitly rejecting WebView.
+New separate `downloads/windows-exe` build: `OnGateLegacy.exe`, direct C++ World,
+Win32 controls, GDI+ PNG animation, native map/civilization/AI setup and gameplay
+commands. No HTML, JS, WebView, HTTP server or browser process in the package.
+
+Initial scope is offline AI skirmish. LAN, audio, editors and full browser HUD
+parity are outstanding. Read [native edition guide](DESKTOP.md). Cross-compiled
+x64 with standard Windows DLL imports; frame bounds/package checks performed.
+A Windows CI self-test is provided; physical Windows execution remains unverified
+in this cloud environment. Existing editions and earlier tags are unchanged.
+Recovery tag: `milestone/native-windows-first-port`.
+
 ## On'Gate: Legacy · public rename
 
 The owner renamed Crownfall to **On'Gate: Legacy**. Version remains0.6.SilkRoad.

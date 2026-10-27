@@ -762,6 +762,14 @@ async function poll() {
     urgentPoll ? 0 : Math.max(0, interval - (performance.now() - pollStarted)),
   );
 }
+function panFrame(){return {left:28,right:viewport.w-28,top:105,bottom:viewport.h-viewport.hudHeight-28};}
+function panArrows(){
+  const f=panFrame(),mx=(f.left+f.right)/2,my=(f.top+f.bottom)/2;
+  return [{x:f.left,y:my,dx:-1,dy:0},{x:f.right,y:my,dx:1,dy:0},
+    {x:mx,y:f.top,dx:0,dy:-1},{x:mx,y:f.bottom,dx:0,dy:1}];
+}
+function panArrowAt(x,y){return panArrows().find(a=>Math.abs(x-a.x)<=17&&Math.abs(y-a.y)<=17);}
+
 function soundNearby(e) {
   const p = screen(e.x,e.y);
   return connected && p.x>=0 && p.x<=viewport.w && p.y>=77 && p.y<viewport.h-viewport.hudHeight;
@@ -1079,15 +1087,6 @@ function updateUI() {
     return;
   }
   if (isObserver() || e.owner !== player) return;
-  if (actionTab === "commands" && (e.kind !== 4 || isUnitKind(e.kind)))
-    actionButton(
-      "✕",
-      isUnitKind(e.kind) ? "Delete units" : "Raze building",
-      isUnitKind(e.kind)
-        ? "Remove selected units immediately."
-        : "Raze selected buildings after two confirmations.",
-      requestDelete,
-    );
   if (e.garrison) {
     actionButton(
       "⇧",
@@ -1136,6 +1135,7 @@ function updateUI() {
         );
       return;
     }
+    if (hasBuilder) actionButton("♧", "Collect", "Click a resource or farm to collect.", () => armOrder("collect"));
     if (hasBuilder)
       actionButton(
         "⚒",
@@ -1184,7 +1184,7 @@ function updateUI() {
       );
   } else if (e.progress >= 1) {
     for (const technology of technologies.filter(
-      (t) => t.building === e.kind && (t.id !== 4 || allowedKind(40)) && (t.id !== 5 || allowedKind(20)),
+      (t) => t.id !== 5 && t.building === e.kind && (t.id !== 4 || allowedKind(40)),
     )) {
       const level = p.technologies?.[technology.id] || 0,
         next =
@@ -1225,6 +1225,16 @@ function updateUI() {
         $("advance").disabled,
       );
   }
+  if (actionTab === "commands" && (e.kind !== 4 || isUnitKind(e.kind)))
+    actionButton(
+      "✕",
+      isUnitKind(e.kind) ? "Delete units" : "Raze building",
+      isUnitKind(e.kind)
+        ? "Remove selected units immediately."
+        : "Raze selected buildings after two confirmations.",
+      requestDelete,
+    );
+
 }
 function renderProductionIcons(building) {
   const area = $("production-icons");
@@ -1252,6 +1262,7 @@ function armOrder(action) {
   attackMode = action;
   canvas.style.cursor = "crosshair";
   const prompt = {
+    collect: "Click berries, a tree, a deposit or your farm to collect.",
     move: "Click where to move.",
     repair:
       "Click a damaged friendly building to repair. Resources are consumed as health is restored.",
@@ -1264,12 +1275,22 @@ function armOrder(action) {
 function placementCenter(kind, value) {
   return Math.floor(value) + ((footprints[kind] || 1) % 2 ? 0.5 : 1);
 }
+// The hovered cell is the first Gate tile; native commands still use its center.
+function gatePlacementPoint(wx, wy, facing = gateFacing) {
+  const direction = [[1,0],[0,1],[-1,0],[0,-1]][facing];
+  return {x: Math.floor(wx)+.5+direction[0], y: Math.floor(wy)+.5+direction[1]};
+}
+function rotateGate(step) {
+  gateFacing = (gateFacing + step + 4) % 4;
+  toast("Gate direction: " + ["East","South","West","North"][gateFacing] + " · first tile stays fixed");
+}
 function placementValid(kind, wx, wy) {
   if (!state || wx < 0 || wy < 0) return false;
   const n = footprints[kind] || 1,
     width = kind===41 ? (gateFacing%2 ? 1:3) : n,
     height = kind===41 ? (gateFacing%2 ? 3:1) : n,
-    x = placementCenter(kind, wx), y = placementCenter(kind, wy),
+    point = kind===41 ? gatePlacementPoint(wx, wy) : {x:placementCenter(kind, wx),y:placementCenter(kind, wy)},
+    x = point.x, y = point.y,
     left = Math.floor(x-width/2+.001), top = Math.floor(y-height/2+.001);
   if (left < 0 || top < 0 || left + width > state.width || top + height > state.height)
     return false;
@@ -1303,7 +1324,7 @@ function beginBuild(kind) {
   placing = kind;
   attackMode = false;
   canvas.style.cursor = "crosshair";
-  toast(kind === 41 ? "Place a three-tile gate; R rotates. May replace your walls." :
+  toast(kind === 41 ? "Place a three-tile gate; Ctrl + wheel or R rotates around the first tile. May replace your walls." :
     kind === 17 ? "Drag with the left button; release to build a connected wall. Shift appends jobs." :
     `Place ${names[kind]} on visible open ground. Shift queues construction. Right-click cancels.`);
 }
@@ -1398,9 +1419,11 @@ function hitEntity(x, y) {
       return entity;
     if (isBuildingKind(entity.kind)) {
       const n = footprints[entity.kind] || 1,
-        left = Math.round(entity.x - n / 2),
-        top = Math.round(entity.y - n / 2);
-      if (tx >= left && tx < left + n && ty >= top && ty < top + n)
+        fw = entity.kind===41 ? (entity.facing%2?1:3) : n,
+        fh = entity.kind===41 ? (entity.facing%2?3:1) : n,
+        left = Math.floor(entity.x - fw / 2 + .001),
+        top = Math.floor(entity.y - fh / 2 + .001);
+      if (tx >= left && tx < left + fw && ty >= top && ty < top + fh)
         return entity;
     }
   }
@@ -1411,6 +1434,9 @@ canvas.addEventListener("mousedown", (e) => {
   if (!connected) return;
   mouse = { x: e.clientX, y: e.clientY };
   canvas.focus();
+  if (!state.waiting && CrownControls.edgePan && e.button !== 1 && panArrowAt(e.clientX,e.clientY)) {
+    e.preventDefault(); return;
+  }
   if (e.button === 1) {
     e.preventDefault();
     pan = { x: e.clientX, y: e.clientY, cx: camera.x, cy: camera.y };
@@ -1448,7 +1474,7 @@ canvas.addEventListener("mousedown", (e) => {
       x: w.x,
       y: w.y,
       life: 1.2,
-      label: target && (isResourceKind(target.kind)||target.kind===10) && selectedEntities().some(u=>u.kind===0) ? "GATHER" : "",
+      label: target && (isResourceKind(target.kind)||target.kind===10) && selectedEntities().some(u=>u.kind===0) ? "Gather" : "",
       attack: target?.owner >= 0 && !allied(target.owner, player),
     });
     return;
@@ -1459,7 +1485,8 @@ canvas.addEventListener("mousedown", (e) => {
       if (placing === 17) {
         wallDrag = {x: Math.floor(w.x), y: Math.floor(w.y), shift: e.shiftKey};
       } else {
-        order(e.shiftKey ? "queue_build" : "build", { kind: placing, x: w.x, y: w.y, facing: gateFacing });
+        const center=placing===41 ? gatePlacementPoint(w.x,w.y) : w;
+        order(e.shiftKey ? "queue_build" : "build", { kind: placing, x: center.x, y: center.y, facing: gateFacing });
         if(!e.shiftKey){placing=-1;canvas.style.cursor="default";}
       }
       return;
@@ -1467,7 +1494,8 @@ canvas.addEventListener("mousedown", (e) => {
     if (attackMode) {
       const w = unproject(e.clientX, e.clientY);
       const target = hitEntity(e.clientX, e.clientY);
-      const action =
+      if (attackMode === "collect" && (!target || !(isResourceKind(target.kind) || target.kind===10))) { toast("Choose a resource or farm."); return; }
+      const action = attackMode === "collect" ? "interact" :
         attackMode === "attack"
           ? target?.owner >= 0 && !allied(target.owner, player)
             ? "interact"
@@ -1583,6 +1611,10 @@ canvas.addEventListener(
   (e) => {
     e.preventDefault();
     if (!connected) return;
+    if (placing === 41 && e.ctrlKey) {
+      if (e.deltaY) rotateGate(e.deltaY > 0 ? 1 : -1);
+      return;
+    }
     const before = unproject(e.clientX, e.clientY);
     camera.zoom = Math.max(
       1,
@@ -1599,8 +1631,7 @@ canvas.addEventListener(
 addEventListener("keydown", (e) => {
   if ($("escape-menu").open || $("delete-confirm").open) return;
   if (placing === 41 && e.code === "KeyR") {
-    e.preventDefault(); gateFacing = (gateFacing+1)%4;
-    toast("Gate direction: " + ["East","South","West","North"][gateFacing]); return;
+    e.preventDefault(); rotateGate(1); return;
   }
   if (
     CrownControls.isOpen ||
@@ -1933,11 +1964,11 @@ function drawOrderHighlights(z) {
         null,
         color,
       );
-      ctx.fillStyle = color;
-      ctx.font = "10px sans-serif";
+      ctx.fillStyle = unit.order===2 ? "#aeb89b" : color;
+      ctx.font = unit.order===2 ? "9px sans-serif" : "10px sans-serif";
       ctx.textAlign = "center";
       ctx.fillText(
-        { 2: "GATHER", 3: "ATTACK", 4: "BUILD", 9: "GARRISON", 10: "REPAIR" }[
+        { 2: "Gather", 3: "ATTACK", 4: "BUILD", 9: "GARRISON", 10: "REPAIR" }[
           unit.order
         ],
         p.x,
@@ -2150,16 +2181,8 @@ function frame(now) {
     if (CrownControls.down("panRight", keys)) dx++;
     if (CrownControls.down("panUp", keys)) dy--;
     if (CrownControls.down("panDown", keys)) dy++;
-    // Edge panning stays above the command deck, so UI interaction never drifts the map.
-    if (
-      CrownControls.edgePan &&
-      mouse.y > 80 &&
-      mouse.y < viewport.h - viewport.hudHeight - 10
-    ) {
-      if (mouse.x >= 0 && mouse.x < 8) dx--;
-      if (mouse.x > viewport.w - 8) dx++;
-      if (mouse.y < 85) dy--;
-    }
+    // Pan only over the four arrow controls; the physical edges stay inert.
+    if(CrownControls.edgePan){const a=panArrowAt(mouse.x,mouse.y);if(a){dx+=a.dx;dy+=a.dy;}}
     camera.x += (dx * dt * CrownControls.panSpeed) / camera.zoom;
     camera.y += (dy * dt * CrownControls.panSpeed * 0.82) / camera.zoom;
     camera.x = Math.max(
@@ -2176,6 +2199,18 @@ function frame(now) {
   if (state && atlas) {
     const z = camera.zoom;
     drawGround(z);
+    if(connected && !state.waiting && CrownControls.edgePan){
+      ctx.save();
+      for(const a of panArrows()){
+        const active=Math.abs(mouse.x-a.x)<=17&&Math.abs(mouse.y-a.y)<=17;
+        ctx.fillStyle=active?"#253b30d9":"#15251c88";ctx.strokeStyle=active?"#f0d796":"#b29e6999";
+        ctx.lineWidth=1;ctx.fillRect(a.x-16,a.y-16,32,32);ctx.strokeRect(a.x-16,a.y-16,32,32);
+        ctx.beginPath();ctx.moveTo(a.x+a.dx*7,a.y+a.dy*7);
+        ctx.lineTo(a.x-a.dx*5+a.dy*6,a.y-a.dy*5-a.dx*6);
+        ctx.lineTo(a.x-a.dx*5-a.dy*6,a.y-a.dy*5+a.dx*6);
+        ctx.closePath();ctx.fillStyle=active?"#f0d796":"#d4bd7e";ctx.fill();
+      }ctx.restore();
+    }
     drawOrderHighlights(z);
     const ordered = renderEntities;
     ordered.length = 0;
@@ -2254,7 +2289,7 @@ function frame(now) {
         if (isUnitKind(e.kind)) CrownMotion.draw(ctx, atlas, e, p, z);
         else if (isBuildingKind(e.kind)) {
           CrownDamage.building(ctx, atlas, e, p, z, renderTime);
-          CrownArt.buildingFlag(ctx, e, p.x, p.y, z, renderTime);
+          /* Building flags removed; rally/order flags remain useful. */
         } else CrownArt.blit(ctx, atlas, e, p.x, p.y, z);
         if (e.kind === 5) {
           for (let puff = 0; puff < 2; puff++) {
@@ -2336,18 +2371,18 @@ function frame(now) {
     }
     if (placing >= 0) {
       const w = unproject(mouse.x, mouse.y),
-        p = screen(
-          placementCenter(placing, w.x),
-          placementCenter(placing, w.y),
-        ),
+        center = placing===41 ? gatePlacementPoint(w.x,w.y) : {x:placementCenter(placing,w.x),y:placementCenter(placing,w.y)},
+        p = screen(center.x,center.y),
         valid = placementValid(placing, w.x, w.y);
       if(placing===41){
         const fw=gateFacing%2?1:3, fh=gateFacing%2?3:1;
         ctx.beginPath();
         [[-fw/2,-fh/2],[fw/2,-fh/2],[fw/2,fh/2],[-fw/2,fh/2]].forEach(([dx,dy],i)=>{
-          const q=screen(placementCenter(placing,w.x)+dx,placementCenter(placing,w.y)+dy);
+          const q=screen(center.x+dx,center.y+dy);
           if(i)ctx.lineTo(q.x,q.y);else ctx.moveTo(q.x,q.y);
         });ctx.closePath();ctx.fillStyle=valid?"#bddb9b44":"#dc725b55";ctx.strokeStyle=valid?"#d1e4ae":"#e99777";ctx.fill();ctx.stroke();
+        const pivot=screen(Math.floor(w.x)+.5,Math.floor(w.y)+.5);
+        ctx.beginPath();ctx.arc(pivot.x,pivot.y,3,0,Math.PI*2);ctx.fillStyle="#f0d796";ctx.fill();
       }else diamond(
         p.x,
         p.y,
@@ -2405,9 +2440,10 @@ function frame(now) {
       ctx.stroke();
     }
     for (const m of markers) if (m.label) {
-      const p=screen(m.x,m.y);ctx.save();ctx.globalAlpha=Math.min(1,m.life*2);
-      ctx.font="bold 18px sans-serif";ctx.textAlign="center";ctx.lineWidth=4;
-      ctx.strokeStyle="#142a20";ctx.fillStyle="#ffe6a0";
+      const p=screen(m.x,m.y),gather=m.label.toLowerCase()==="gather";
+      ctx.save();ctx.globalAlpha=Math.min(1,m.life*2)*(gather?.65:1);
+      ctx.font=gather?"11px sans-serif":"bold 18px sans-serif";ctx.textAlign="center";ctx.lineWidth=gather?2:4;
+      ctx.strokeStyle="#142a20";ctx.fillStyle=gather?"#b7c2a1":"#ffe6a0";
       ctx.strokeText(m.label,p.x,p.y-55*z-(1.2-m.life)*18);
       ctx.fillText(m.label,p.x,p.y-55*z-(1.2-m.life)*18);ctx.restore();
     }

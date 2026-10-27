@@ -1,3 +1,8 @@
+> Current Electron support: [Steam480 desktop friend testing](STEAM480-DESKTOP.md).
+> The owner supplied SDK1.65 and authorized App480. Electron now includes a native
+> SDK bridge and gameplay relay adapter. Earlier preparation/Godot notes below
+> describe prior milestones; live-account verification remains pending.
+
 # Steamworks preparation — SilkRoad
 
 **Status: optional SDK adapter prepared; Steam invitations and Steam relay gameplay
@@ -62,3 +67,12 @@ install test. None of those SDK/account-dependent checks has been performed here
 The same game rules compile to WebAssembly without Steam. Keeping the adapter in
 native engine services avoids leaking SDK dependencies into future games, the
 simulation, or static web exports. Default builds require no Steam installation.
+
+## Current owner-authorized development path
+
+The owner has now supplied SDK1.65 and explicitly authorized universal development
+App ID480. The new Godot Windows build implements SDK-backed friends-only lobbies
+and a bounded SteamNetworkingSockets relay adapter. See [Godot/Steam480 setup](GODOT.md).
+This supersedes the earlier preparation-only scope for that new frontend; the
+older browser-hosted Windows build still has its original adapter. Live Steam
+account/relay testing and production App ID approval remain outstanding.

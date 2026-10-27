@@ -17,7 +17,7 @@ A practical handbook for your first kingdom, a LAN evening with friends, and you
 5. Select a villager, then right-click berries or a tree. Select the Town Center and train villagers. Build a house before your population reaches its limit.
 6. Build a Barracks, gather an army and keep your final Town Center alive. A kingdom loses when its last Town Center is destroyed; the last surviving allied side wins.
 
-The Web build is a **local AI demo**. It runs the same C++ gameplay through WebAssembly, but does not provide native LAN hosting or joining. A static HTTP(S) host must serve its extracted files; opening its HTML directly from disk is not the supported launch path. [Platform instructions](INSTALL.md).
+The Web build runs local AI and browser-hosted WebRTC rooms using the same C++ gameplay through WebAssembly. It does not host native LAN HTTP or the desktop Steam SDK transport. A static HTTP(S) host must serve its extracted files; opening its HTML directly from disk is not the supported launch path. [Platform instructions](INSTALL.md).
 
 ### A useful opening, not a compulsory build order
 
@@ -142,7 +142,7 @@ Click Advance to begin age research after meeting these gates, regardless of sel
 | Wheelbarrow I / II | School | +12% villager movement speed per level. |
 | Forging I / II | Blacksmith | +2 soldier attack per level; does not upgrade civilian or building attacks. |
 | Armor I / II | Blacksmith | +1 soldier armor per level. Each hit still deals at least one damage. |
-| Swordsmanship | Castle Barracks, after Militia Drill | Existing Footmen/Militia and future recruits become Swordsmen; 150 food + 100 gold, 30 seconds. |
+| Swordsmen | Castle Barracks | Train directly. Swordsmanship research is removed; existing Militia keep their class. |
 | Militia Drill | Idle Feudal Barracks | Upgrade Footmen to Militia, including future recruits; 100 food + 50 gold, 20 simulated seconds. |
 
 A building researches one technology at a time. Completed upgrades apply kingdom-wide and survive losing the research building. Destroying a building cancels its unfinished research without a refund. Age gates, second-level requirements, prices and civilization multipliers still apply. [Full research tables and repair accounting](ECONOMY.md).
@@ -276,3 +276,14 @@ Out-of-map preview fog and the locked main-menu camera are unchanged.
 ## Further reading
 
 [Technology](TECHNOLOGY.md) · [Gameplay](GAMEPLAY.md) · [Economy](ECONOMY.md) · [Civilizations](NEW_ERA.md) · [AI](AI.md) · [Hosting](HOSTING.md) · [Diagnostics](DIAGNOSTICS.md) · [Studio](STUDIO.md) · [Engine](ENGINE.md) · [Exports](EXPORTS.md) · [Artwork](ART.md) · [Recovery timeline](PROGRESS.md).
+
+## Current desktop and AI updates
+
+[Electron Steam480 testing](STEAM480-DESKTOP.md) explains the Alt-menu host/join
+controls, SDK relay boundaries and pending live-account checks. A portable desktop
+ZIP keeps its settings beside the executable. The installer also lets you select
+a custom empty folder. Four gold pan-arrow controls replace the green frame.
+
+[AI scouting](AI-SCOUTING.md) uses real team line of sight: enemy bases must be
+discovered before raids are planned, and hidden bases are remembered at their
+last-seen locations. Difficulty does not grant map vision or free resources.

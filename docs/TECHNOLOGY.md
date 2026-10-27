@@ -8,6 +8,12 @@ See [SilkRoad](SILKROAD.md) for browser-room authority/bounds and construction q
 
 ![Browser room authority and spectator transport](images/guide-silkroad-network.svg)
 
+The Electron desktop build uses the same shared UI in sandboxed Chromium. Its
+optional [Steam480 sidecar](STEAM480-DESKTOP.md) wraps the private SDK while a
+bounded main-process adapter permits gameplay HTTP/SSE only. AI now uses
+[frontier scouting and last-seen base memory](AI-SCOUTING.md) in fixed-size C++
+records; shared rules and team fog remain authoritative.
+
 ## 1. The short version
 
 ![Commands enter C++ rules, then filtered snapshots become graphics; native Windows and WebAssembly are two deployment paths](images/guide-technology.svg)

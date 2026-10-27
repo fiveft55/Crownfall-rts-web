@@ -1,7 +1,8 @@
 /* Visual motion only. Server positions, work, damage and cooldowns remain authoritative. */
 "use strict";
 window.CrownMotion = (() => {
-  const tracks = new Map(),
+  const gates = new Map(),
+    tracks = new Map(),
     definitions = new Map(),
     cells = new Map();
   let entities = new Map(),
@@ -51,6 +52,7 @@ window.CrownMotion = (() => {
       snapshot?.width !== next.width
     ) {
       tracks.clear();
+      gates.clear();
       clock = 0;
     }
     lastTime = next.time;
@@ -108,6 +110,26 @@ window.CrownMotion = (() => {
         t.visual.y = e.y;
       }
     }
+    const gateIds=new Set();
+    for(const gate of next.entities){
+      if(gate.kind!==41||gate.progress<1||gate.hp<=0)continue;
+      gateIds.add(gate.id);
+      let track=gates.get(gate.id);
+      if(!track){track={lift:0,holdUntil:0};gates.set(gate.id,track);}
+      const halfX=gate.facing%2?.5:1.5,halfY=gate.facing%2?1.5:.5;
+      let open=false;
+      for(let cy=Math.floor((gate.y-halfY-1)/4);cy<=Math.floor((gate.y+halfY+1)/4)&&!open;cy++)
+        for(let cx=Math.floor((gate.x-halfX-1)/4);cx<=Math.floor((gate.x+halfX+1)/4)&&!open;cx++)
+          for(const unit of cells.get(`${cx},${cy}`)||[]){
+            if(!CrownArt.isUnit(unit.kind)||unit.garrison||unit.hp<=0||hostile(unit.owner,gate.owner))continue;
+            const dx=Math.abs(unit.x-gate.x),dy=Math.abs(unit.y-gate.y),
+              inside=dx<=halfX+.25&&dy<=halfY+.25,
+              walking=[1,5,6,9].includes(unit.order)||(tracks.get(unit.id)?.velocity||0)>.15;
+            if(inside||(walking&&dx<=halfX+1&&dy<=halfY+1)){open=true;break;}
+          }
+      if(open)track.holdUntil=clock+.75;
+    }
+    for(const id of gates.keys())if(!gateIds.has(id))gates.delete(id);
     for (const [id] of tracks)
       if (!entities.has(id) || entities.get(id).garrison) tracks.delete(id);
   }
@@ -119,6 +141,10 @@ window.CrownMotion = (() => {
         : dt * (snapshot.speed || 1);
     if (step === 0) return;
     clock += step;
+    for(const gate of gates.values()){
+      const open=clock<gate.holdUntil;
+      gate.lift=Math.max(0,Math.min(1,gate.lift+(open?step/.3:-step/.55)));
+    }
     for (const [id, t] of tracks) {
       const blend = 1 - Math.exp(-step / (t.blendSeconds || 1 / 24));
       const e = entities.get(id),
@@ -244,6 +270,7 @@ window.CrownMotion = (() => {
           }
         : null;
     },
+    gateLift(id) { return gates.get(id)?.lift || 0; },
     get size() {
       return tracks.size;
     },
