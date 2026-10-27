@@ -1,5 +1,7 @@
 /* Browser platform adapter: input + rendering only. C++ owns all game rules. */
 "use strict";
+// Suppress browser Save/Inspect menus everywhere; keep mouse command events intact.
+document.addEventListener("contextmenu", (event) => event.preventDefault(), { capture: true });
 const $ = (id) => document.getElementById(id),
   canvas = $("battlefield"),
   ctx = canvas.getContext("2d"),

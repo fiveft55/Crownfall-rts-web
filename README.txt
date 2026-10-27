@@ -1,1 +1,5 @@
-Upload this folder to any static HTTP(S) host. Open index.html through that host, not file://. The C++ simulation runs locally as WebAssembly in a worker. Local AI or WebRTC browser rooms with manual invitations (HTTPS/localhost); native exports host direct-IP LAN. Browser saves use IndexedDB; export important maps/civilizations.
+On'Gate: Legacy - browser demo
+
+Upload this folder to a static HTTPS host, then open index.html. HTTP localhost also works; file:// does not.
+Local AI and browser WebRTC rooms are available. Keep the host tab open.
+Steamworks and native LAN server tools are not part of this demo.
