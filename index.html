@@ -3,26 +3,42 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>On'Gate: Legacy — Monarch</title>
+    <title>On'Gate: Legacy — 0.8 New World</title>
     <link rel="icon" href="./favicon.svg" />
-    <link rel="stylesheet" href="./style.css" />
-    <link rel="stylesheet" href="./monarch.css" />
-  </head>
+    
+    
+  <link rel="stylesheet" href="demo.css"></head>
   <body data-screen="menu">
+    <section id="chat-panel" hidden aria-label="Match chat">
+      <div id="chat-history" role="log" aria-live="polite"></div>
+      <form id="chat-form" hidden autocomplete="off">
+        <input
+          id="chat-input"
+          maxlength="240"
+          aria-label="Chat message"
+          placeholder="Message or numeric phrase + color (11 Crimson)"
+        /><button type="submit">SEND</button>
+      </form>
+      <details id="chat-phrases" hidden>
+        <summary>Numeric phrases · 0–43 (4 unassigned)</summary>
+        <div id="chat-phrase-list"></div>
+      </details>
+    </section>
     <canvas
       id="battlefield"
       aria-label="Isometric battlefield: select units with left click and command with right click"
       tabindex="0"
     ></canvas>
     <header id="topbar">
-      <a class="wordmark" href="./"
-        >♜
+      <div class="wordmark">
+        ♜
         <span
           >On'Gate: Legacy<small
-            ><span id="release-version">0.6.SilkRoad</span></small
+            ><span id="release-version">0.8.New-World</span></small
           ></span
-        ></a
-      >
+        >
+      </div>
+      <div id="council-story"><small>A REALM WAITING TO BE BUILT</small><strong>A kingdom starts with <em>you.</em></strong><span>Gather your people. Write your history.</span></div><button id="council-settings">SETTINGS</button>
       <div id="resources">
         <div><i>◒</i><span id="food">350</span><small>FOOD</small></div>
         <div><i>♧</i><span id="wood">420</span><small>WOOD</small></div>
@@ -44,6 +60,8 @@
           ♫</button
         ><button id="grid" title="Toggle tile grid (G)" aria-pressed="false">
           ▦</button
+        ><button id="diplomacy" title="Diplomacy and tribute">
+          ⚖ Diplomacy</button
         ><button id="workshop" title="Civilizations and map forge">⌘</button
         ><button id="settings" title="Lobby and server controls" class="hidden">
           ⚙</button
@@ -73,16 +91,22 @@
     </div>
     <div id="toast" role="status"></div>
     <section id="lobby" class="hidden" aria-label="Skirmish and LAN lobby">
+      <nav id="council-tabs" aria-label="Hosting tabs">
+        <button id="map-tab" aria-selected="true">⚑ MAP SETTINGS</button>
+        <button id="council-main-menu">MAIN MENU</button>
+      </nav>
+      
+      <div id="council-map">
       <div class="eyebrow">GATHER YOUR COMMANDERS</div>
       <h2>The war council</h2>
       <p class="lobby-subtitle">
-        Two kingdoms by default, up to sixteen. Choose your banners and forge an
+        Two kingdoms by default, up to twelve. Choose your banners and forge an
         alliance.
       </p>
       <div id="lobby-layout">
         <div>
           <div class="panel-heading">
-            <span>COMMANDERS</span><span id="lobby-count"></span>
+            <span>COMMANDERS<span id="commander-steam-name"></span></span><span id="lobby-count"></span>
           </div>
           <div id="lobby-players"></div>
           <button id="add-ai" class="watch-button">+ ADD AI KINGDOM</button>
@@ -95,33 +119,99 @@
         <div class="lobby-settings">
           <div class="panel-heading"><span>THE BATTLEFIELD</span></div>
           <label
+            >Game mode<select id="lobby-mode">
+              <option value="0">Classic</option>
+              <option value="1">Nomads</option>
+              <option value="2">Quick Deathmatch</option>
+              <option value="3">Traitors · 3+ kingdoms</option>
+              <option value="4">Dragon’s Heart</option>
+              <option value="5">Gold Digger</option>
+              <option value="6">Free Play · explore, optional AI</option>
+            </select></label
+          ><label
             >Map<select id="lobby-map">
               <option value="0">The Riverlands · two crossings</option>
               <option value="1">Highland March · open terrain</option>
               <option value="2">Twin Lakes · lakes and woodland</option>
+              <option value="3">Gold Rush · central mountain</option>
+              <option value="4">Oasis · desert and palms</option>
+              <option value="5">Islands · naval conquest</option>
             </select></label
           >
-          <label>Building art<select id="lobby-art-theme"><option value="silk-road">Silk-Road</option><option value="legacy">Legacy</option></select></label>
-          <label>Map size<select id="lobby-size"><option value="64" selected>64 × 64</option>
+          <div class="field-row">
+            <label
+              >Population limit<input
+                id="lobby-population"
+                type="number"
+                min="10"
+                max="1000"
+                value="120"
+            /></label>
+          </div>
+          <div class="field-row" id="starting-resources">
+            <label
+              >Food<input
+                id="lobby-resource0"
+                type="number"
+                min="0"
+                max="1000000"
+                value="100" /></label
+            ><label
+              >Wood<input
+                id="lobby-resource1"
+                type="number"
+                min="0"
+                max="1000000"
+                value="100" /></label
+            ><label
+              >Gold<input
+                id="lobby-resource2"
+                type="number"
+                min="0"
+                max="1000000"
+                value="100" /></label
+            ><label
+              >Stone<input
+                id="lobby-resource3"
+                type="number"
+                min="0"
+                max="1000000"
+                value="100"
+            /></label>
+          </div>
+          <label
+            >Visual theme<select id="lobby-art-theme">
+              <option value="uncharted">Uncharted Lands</option>
+
+
+            </select></label
+          >
+          <label
+            >Map size<select id="lobby-size">
+              <option value="64" selected>64 × 64</option>
               <option value="80">80 × 80</option>
               <option value="96">96 × 96</option>
               <option value="112">112 × 112</option>
               <option value="128">128 × 128</option>
-              <option value="custom">Custom dimensions</option></select></label>
+              <option value="256">256 × 256</option>
+              <option value="512">512 × 512</option>
+              <option value="custom">Custom dimensions</option>
+            </select></label
+          >
           <div class="field-row hidden" id="lobby-custom-dimensions">
             <label
               >Width in tiles<input
                 id="lobby-width"
                 type="number"
                 min="48"
-                max="128"
+                max="512"
                 value="64" /></label
             ><label
               >Height in tiles<input
                 id="lobby-height"
                 type="number"
                 min="48"
-                max="128"
+                max="512"
                 value="64"
             /></label>
           </div>
@@ -136,10 +226,108 @@
                 value="7"
             /></label>
           </div>
+          <details class="environment-settings">
+            <summary>Advanced map settings · Wildlife &amp; disasters</summary>
+            <div class="field-row">
+              <label
+                >Animals (%)<input
+                  id="lobby-wildlifePercent"
+                  type="number"
+                  min="0"
+                  max="400"
+                  step="25"
+                  value="100" /></label
+              ><label
+                >Wolves &amp; bears (%)<input
+                  id="lobby-threatPercent"
+                  type="number"
+                  min="0"
+                  max="400"
+                  step="25"
+                  value="100"
+              /></label>
+            </div>
+            <label
+              >Natural disasters<select id="lobby-disasters">
+                <option value="0">Off</option>
+                <option value="1">On</option>
+              </select></label
+            >
+            <div class="field-row">
+              <label
+                >Event frequency (%)<input
+                  id="lobby-disasterPercent"
+                  type="number"
+                  min="0"
+                  max="400"
+                  step="25"
+                  value="100" /></label
+              ><label
+                >Event selection<select id="lobby-disasterMode">
+                  <option value="0">Uncertain · selected types</option>
+                  <option value="1">Fixed major type + random hazards</option>
+                </select></label
+              >
+            </div>
+            <label
+              >Fixed major type<select id="lobby-fixedDisaster">
+                <option value="3">Earthquake</option>
+                <option value="4">Tornado / hurricane</option>
+                <option value="6">Heatwave</option>
+              </select></label
+            >
+            <fieldset>
+              <legend>
+                Allowed types (random hazards remain optional in Fixed mode)
+              </legend>
+              <label class="disaster-choice"
+                ><input
+                  id="lobby-disaster-type1"
+                  type="checkbox"
+                  checked
+                />Wildlife surge</label
+              ><label class="disaster-choice"
+                ><input
+                  id="lobby-disaster-type2"
+                  type="checkbox"
+                  checked
+                />Forest fire</label
+              ><label class="disaster-choice"
+                ><input
+                  id="lobby-disaster-type3"
+                  type="checkbox"
+                  checked
+                />Earthquake</label
+              ><label class="disaster-choice"
+                ><input
+                  id="lobby-disaster-type4"
+                  type="checkbox"
+                  checked
+                />Tornado</label
+              ><label class="disaster-choice"
+                ><input
+                  id="lobby-disaster-type5"
+                  type="checkbox"
+                  checked
+                />Flood / Oasis quicksand</label
+              ><label class="disaster-choice"
+                ><input
+                  id="lobby-disaster-type6"
+                  type="checkbox"
+                  checked
+                />Heatwave</label
+              >
+            </fieldset>
+            <p>
+              0% disables procedural spawns/events; 100% is normal, 400% is
+              fourfold. Rivers are required for floods. Six-second warnings
+              precede disasters. Apply settings before readying.
+            </p>
+          </details>
           <button id="peer-invite" hidden>INVITES &amp; CONNECTIONS</button>
           <button id="apply-map">APPLY MAP SETTINGS</button>
           <p id="lobby-map-note">
-            48–128 tiles per side. Choose 96 or 128 for a large council.
+            64–512 tiles per side; Custom supports 48–512.
             Changing settings clears readiness.
           </p>
           <div class="share-address" id="lan-share">
@@ -153,26 +341,34 @@
         </div>
       </div>
       <div class="observer-seats" id="lan-observer-seats">
-        <span id="operator-name"></span><span id="spectator-list"></span
-        ><a href="./?seat=player" target="_blank" rel="noopener"
-          >Open a player tab ↗</a
-        >
+        <span id="operator-name"></span><span id="spectator-list"></span>
+
       </div>
       <div class="lobby-bottom">
         <button id="leave-lobby">← LEAVE LOBBY</button
-        ><button id="spectate-seat">SPECTATE · AI TAKES MY SEAT</button
+        ><button id="play-seat">JOIN AS PLAYER</button><button id="spectate-seat">JOIN AS SPECTATOR</button
         ><button id="lobby-console">HOSTING CONSOLE ↗</button>
         <span id="lobby-status">Waiting for commanders…</span
         ><button id="ready">READY UP</button
+        ><button id="continue-match" hidden>CONTINUE GAME →</button
         ><button id="start-match" class="primary">START MATCH →</button>
       </div>
+      </div>
     </section>
-    <main id="welcome" class="menu-shell" aria-label="On'Gate: Legacy main menu">
+    <main
+      id="welcome"
+      class="menu-shell"
+      aria-label="On'Gate: Legacy main menu"
+    >
       <header class="menu-header">
-        <a class="menu-brand" href="./" aria-label="On'Gate: Legacy main menu"
-          ><span aria-hidden="true">♜</span
-          ><span>On'Gate: Legacy<small id="menu-version">0.6.SilkRoad</small></span></a
-        >
+        <div class="menu-brand">
+          <span aria-hidden="true">♜</span
+          ><span
+            >On'Gate: Legacy<small id="menu-version"
+              >0.8.New-World</small
+            ></span
+          >
+        </div>
         <div class="welcome-story">
           <div class="eyebrow">A REALM WAITING TO BE BUILT</div>
           <h2>A kingdom starts with <em>you.</em></h2>
@@ -204,7 +400,7 @@
         <div class="local-options">
           <button id="solo" class="primary" disabled>
             ⚔ &nbsp; SOLO VS. AI</button
-          ><button id="skirmish" disabled>SKIRMISH LOBBY</button>
+          ><button id="free-play">FREE PLAY · EXPLORE</button><button id="tutorial">♟ TUTORIAL · COUNCIL TUTOR</button>
         </div>
         <div class="menu-section-title native-only">MULTIPLAYER</div>
         <div class="lan-buttons">
@@ -221,6 +417,7 @@
         ><button id="welcome-workshop" class="watch-button">
           ⌘ &nbsp; MAP & CIV FORGE
         </button>
+        <button id="exit-game" class="watch-button">⏻ &nbsp; EXIT GAME</button>
 
         <details class="menu-connection">
           <summary>Join another server</summary>
@@ -280,10 +477,23 @@
             <summary>MAP SETTINGS <span>＋</span></summary>
             <div>
               <label
+                >Game mode<select id="map-mode">
+                  <option value="0">Classic</option>
+                  <option value="1">Nomads</option>
+              <option value="2">Quick Deathmatch</option>
+              <option value="3">Traitors · 3+ kingdoms</option>
+              <option value="4">Dragon’s Heart</option>
+              <option value="5">Gold Digger</option>
+              <option value="6">Free Play · explore, optional AI</option>
+                </select></label
+              ><label
                 >Map<select id="map-choice">
                   <option value="0">The Riverlands</option>
                   <option value="1">Highland March</option>
                   <option value="2">Twin Lakes</option>
+                  <option value="3">Gold Rush · central mountain</option>
+                  <option value="4">Oasis · desert and palms</option>
+                  <option value="5">Islands · naval conquest</option>
                 </select></label
               >
               <label
@@ -293,6 +503,8 @@
                   <option value="96">96 × 96 · standard</option>
                   <option value="112">112 × 112</option>
                   <option value="128">128 × 128 · large</option>
+                  <option value="256">256 × 256</option>
+                  <option value="512">512 × 512</option>
                   <option value="custom">Custom dimensions</option>
                 </select></label
               >
@@ -302,14 +514,14 @@
                     id="map-width"
                     type="number"
                     min="48"
-                    max="128"
+                    max="512"
                     value="64" /></label
                 ><label
                   >Height<input
                     id="map-height"
                     type="number"
                     min="48"
-                    max="128"
+                    max="512"
                     value="64"
                 /></label>
               </div>
@@ -337,7 +549,7 @@
         </div>
         <div class="welcome-foot">
           NATIVE C++ ENGINE <b>·</b> PROCEDURAL PIXEL ART<br /><span
-            >16 kingdoms · 4 spectators · dedicated host</span
+            >12 kingdoms · 4 spectators · dedicated host</span
           >
         </div>
       </footer>
@@ -388,7 +600,8 @@
     <footer id="command-deck">
       <section class="minimap-wrap">
         <div class="panel-heading">
-          <span id="minimap-title">THE RIVERLANDS</span><span id="map-size">64 × 64</span>
+          <span id="minimap-title">THE RIVERLANDS</span
+          ><span id="map-size">64 × 64</span>
         </div>
         <canvas
           id="minimap"
@@ -426,7 +639,8 @@
           aria-label="Villager action categories"
         ></div>
         <div id="actions"></div>
-        <div id="queue"></div><div id="production-icons" aria-label="Production and garrison"></div>
+        <div id="queue"></div>
+        <div id="production-icons" aria-label="Production and garrison"></div>
       </section>
       <section id="chronicle">
         <div class="panel-heading">
@@ -445,7 +659,7 @@
       <h2>Your field guide</h2>
       <div class="guide-grid">
         <article>
-          <h3>SilkRoad</h3>
+          <h3>New World</h3>
           <p>
             Choose one of ten fantasy peoples before joining. Stories and
             bonuses appear under People &amp; Civilization. Barracks train early
@@ -469,10 +683,10 @@
             construction resources per full health bar restored.
           </p>
           <p>
-            From Feudal Age, build a School for gathering and villager walking upgrades. In the
-            Feudal Age, build a Blacksmith for soldier attack and armor
-            upgrades. Select the structure to research; its price and age
-            requirements appear on hover.
+            From Feudal Age, build a School for gathering and villager walking
+            upgrades. In the Feudal Age, build a Blacksmith for soldier attack
+            and armor upgrades. Select the structure to research; its price and
+            age requirements appear on hover.
           </p>
         </article>
         <article>
@@ -495,9 +709,12 @@
         <article>
           <h3>03 &nbsp; Raise your banner</h3>
           <p>
-            Select your Town Center to train villagers. Barracks train early infantry.
-            Advance to the Feudal Age for archers and towers, then the Castle
-            Age for knights and Swordsmanship. Spearmen counter cavalry. Advance works with any selection. Shift-place queues construction; drag Walls and press R to rotate Gates. Town Centers cannot be razed.
+            Select your Town Center to train villagers. Barracks train early
+            infantry. Advance to the Feudal Age for archers and towers, then the
+            Castle Age for knights and Swordsmanship. Spearmen counter cavalry.
+            Advance works with any selection. Shift-place queues construction;
+            drag Walls and press R to rotate Gates. Town Centers cannot be
+            razed.
           </p>
         </article>
         <article>
@@ -557,15 +774,7 @@
         the same authoritative C++ simulation.
       </p>
     </dialog>
-    <dialog id="delete-confirm" aria-labelledby="delete-title">
-      <h2 id="delete-title">Raze selected buildings?</h2>
-      <p id="delete-warning"></p>
-      <p id="delete-stage">Confirmation 1 of 2</p>
-      <button id="cancel-delete">CANCEL</button
-      ><button id="confirm-delete" class="danger">
-        CONTINUE TO FINAL CONFIRMATION
-      </button>
-    </dialog>
+
     <dialog id="escape-menu" aria-labelledby="escape-title">
       <button
         id="close-escape"
@@ -576,6 +785,7 @@
       </button>
       <div class="eyebrow">THE WAR COUNCIL</div>
       <h2 id="escape-title">Game menu</h2>
+      <button id="inspect-lobby">Lobby · view players</button>
       <p id="menu-match-info"></p>
       <p>Opening this menu does not pause a LAN match.</p>
       <div class="menu-buttons">
@@ -590,9 +800,7 @@
             <option value="balanced">
               Balanced · 60 FPS / up to 1.5× pixels
             </option>
-            <option value="legacy">
-              Legacy dual-core · 30 FPS / 1× pixels
-            </option>
+
             <option value="display">
               High quality · 200 FPS / up to 2× pixels
             </option>
@@ -666,6 +874,7 @@
       </p>
       <div class="menu-exit-buttons">
         <button id="menu-surrender" class="danger">SURRENDER</button>
+        <button id="menu-main-menu">RETURN TO MAIN MENU</button>
       </div>
       <div id="surrender-confirm" class="hidden">
         <p id="surrender-warning"></p>
@@ -701,7 +910,8 @@
           value="550"
         />
         <label
-          ><input id="edge-pan" type="checkbox" checked /> Hover pan arrows</label
+          ><input id="edge-pan" type="checkbox" checked /> Hover pan
+          arrows</label
         >
       </div>
       <div id="binding-list"></div>
@@ -718,303 +928,151 @@
         class="hidden"
       />
     </dialog>
-    <div id="end-screen" class="hidden">
+    <aside id="tutorial-panel" hidden><button id="tutorial-close" aria-label="Collapse tutorial objectives" title="Collapse objectives">−</button><strong id="tutorial-title"></strong><p id="tutorial-text"></p><ul id="tutorial-objectives" aria-live="polite"></ul><button id="tutorial-next" disabled>Next lesson →</button></aside><button id="tutorial-reopen" hidden aria-label="Reopen tutorial objectives">♟ Show tutorial objectives</button><div id="end-screen" class="hidden">
       <div class="eyebrow">THE CHRONICLE IS WRITTEN</div>
       <h2 id="end-title">Victory</h2>
       <p id="end-text"></p>
-      <button id="restart" class="primary">BEGIN AGAIN →</button>
+      <div id="scoreboard" aria-label="Match statistics"></div><div class="score-actions"><button id="restart" class="primary">CONTINUE · NEW GAME →</button><button id="score-leave">LEAVE TO MAIN MENU</button></div>
     </div>
 
-    <dialog id="mod-workshop">
-      <button id="close-workshop" class="close" aria-label="Close workshop">
-        ×
-      </button>
-      <div class="eyebrow">MAKE THIS WORLD YOUR OWN</div>
-      <h2>The workshop</h2>
-      <nav class="workshop-tabs">
-        <button data-tab="civ" class="active">CIVILIZATION DESIGNER</button
-        ><button data-tab="map">MAP FORGE</button
-        ><button data-tab="modguide">MODDER’S NOTES</button>
-      </nav>
-      <div id="workshop-message" role="status"></div>
-      <section id="tab-civ" class="workshop-tab">
-        <div class="editor-toolbar">
-          <label>Load a civilization<select id="civ-preset"></select></label
-          ><button id="new-civ">NEW CIVILIZATION</button
-          ><button id="duplicate-civ">DUPLICATE</button>
-        </div>
-        <div class="civ-layout">
-          <div>
-            <label class="editor-tip"
-              >Preview age
-              <select id="civ-preview-age">
-                <option value="1">Dark Age</option>
-                <option value="2">Feudal Age</option>
-                <option value="3">Castle Age</option>
-              </select></label
-            >
-            <canvas id="civ-preview" width="360" height="210"></canvas>
-            <h3 id="civ-preview-name">The Riverborn</h3>
-            <p id="civ-preview-description"></p>
-            <div class="editor-tip">
-              The race template controls architecture, appearance and available
-              troops. Your editable bonuses tune its economy and military. Team
-              insignia identify your kingdom.
-            </div>
-          </div>
-          <div class="civ-fields">
-            <div class="field-row">
-              <label>Name<input id="civ-name" maxlength="60" /></label
-              ><label
-                >Stable ID<input
-                  id="civ-id"
-                  maxlength="32"
-                  placeholder="my-civilization"
-              /></label>
-            </div>
-            <label>Race template<select id="civ-race"></select></label
-            ><button id="apply-race" type="button">
-              USE RACE STORY & BONUSES
-            </button>
-            <label
-              >Story<textarea
-                id="civ-description"
-                maxlength="400"
-                rows="2"
-              ></textarea>
-            </label>
-            <div class="resource-fields">
-              <label
-                >Food<input
-                  id="civ-food"
-                  type="number"
-                  min="0"
-                  max="5000" /></label
-              ><label
-                >Wood<input
-                  id="civ-wood"
-                  type="number"
-                  min="0"
-                  max="5000" /></label
-              ><label
-                >Gold<input
-                  id="civ-gold"
-                  type="number"
-                  min="0"
-                  max="5000" /></label
-              ><label
-                >Stone<input id="civ-stone" type="number" min="0" max="5000"
-              /></label>
-            </div>
-            <div id="civ-sliders"></div>
-            <p class="editor-tip">
-              1.00× is standard. Changes are applied to new matches, never
-              silently to an ongoing game.
-            </p>
-          </div>
-        </div>
-        <div class="editor-bottom">
-          <button class="primary" id="save-civ">SAVE CIVILIZATION</button
-          ><button id="export-civ">EXPORT JSON</button
-          ><button id="import-civ">IMPORT JSON</button>
-        </div>
-      </section>
-      <section id="tab-map" class="workshop-tab hidden">
-        <div class="editor-toolbar">
-          <label
-            >Load a custom map<select id="saved-map">
-              <option value="">New map</option>
-            </select></label
-          ><label
-            >Template<select id="map-template">
-              <option value="blank">Open meadow</option>
-              <option value="river">Riverlands</option>
-              <option value="lakes">Twin Lakes</option>
-            </select></label
-          ><button id="new-map">NEW MAP</button
-          ><button id="undo-map">↶ UNDO</button
-          ><button id="redo-map">↷ REDO</button>
-        </div>
-        <div class="map-editor-layout">
-          <aside class="map-brushes">
-            <h3>Terrain</h3>
-            <div id="terrain-brushes"></div>
-            <h3>Resources</h3>
-            <div id="resource-brushes"></div>
-            <h3>Player starts</h3>
-            <label>Start number<select id="start-index"></select></label
-            ><button id="spawn-brush">⚑ PLACE START</button
-            ><label class="check-label"
-              ><input id="editor-grid" type="checkbox" checked /> Show tile
-              grid</label
-            ><label
-              >Brush size<input
-                id="brush-size"
-                type="range"
-                min="1"
-                max="7"
-                value="1"
-              /><output id="brush-output">1 tile</output></label
-            ><label
-              >Zoom<input
-                id="editor-zoom"
-                type="range"
-                min="1"
-                max="6"
-                step=".1"
-                value="1"
-            /></label>
-          </aside>
-          <div>
-            <div id="editor-map-wrap">
-              <canvas
-                id="map-editor"
-                aria-label="Level designer canvas — paint tiles with left mouse, pan with middle mouse"
-              ></canvas>
-            </div>
-            <div id="map-inspector">Tile 0, 0 · Grass</div>
-          </div>
-          <aside class="map-properties">
-            <h3>Map properties</h3>
-            <label
-              >Name<input
-                id="custom-map-name"
-                value="Untitled meadow"
-                maxlength="60" /></label
-            ><label
-              >Stable ID<input
-                id="custom-map-id"
-                value="untitled-meadow"
-                maxlength="32"
-            /></label>
-            <div class="field-row">
-              <label
-                >Width<input
-                  id="editor-width"
-                  type="number"
-                  min="48"
-                  max="128"
-                  value="64" /></label
-              ><label
-                >Height<input
-                  id="editor-height"
-                  type="number"
-                  min="48"
-                  max="128"
-                  value="64"
-              /></label>
-            </div>
-            <label>Player starts<select id="spawn-count"></select></label
-            ><button id="resize-map">APPLY SIZE / STARTS</button
-            ><label class="check-label"
-              ><input id="auto-resources" type="checkbox" checked /> Automatic
-              resources at starts and across the map</label
-            >
-            <p class="editor-tip">
-              Starts reserve a dry 17 × 17 area for a fair settlement. Paint
-              bridges to connect land. The inner 3 × 3 outline is the Town
-              Center; resource painting keeps it clear.
-            </p>
-            <button id="validate-map">CHECK LAND ROUTES</button>
-            <div id="map-validation"></div>
-          </aside>
-        </div>
-        <div class="editor-bottom">
-          <button class="primary" id="save-map">SAVE MAP TO SERVER</button
-          ><button id="export-map">EXPORT JSON</button
-          ><button id="import-map">IMPORT JSON</button
-          ><span
-            >Left-drag paints · middle-drag pans · wheel zooms · undo restores a
-            stroke</span
-          >
-        </div>
-      </section>
-      <section id="tab-modguide" class="workshop-tab hidden">
-        <div class="guide-grid">
-          <article>
-            <h3>Start with data, not code</h3>
-            <p>
-              Create or duplicate a civilization. Set its name, story, starting
-              stockpile and multipliers. Save it, then choose it in the welcome
-              screen or your lobby row. The operator stores data in
-              <code>data/content.json</code>.
-            </p>
-          </article>
-          <article>
-            <h3>Design a battlefield</h3>
-            <p>
-              Choose dimensions and 2–16 starts. Paint land, water, bridges,
-              woodland and deposits. Check that all starts have land routes,
-              then save. The host can choose your map in the lobby.
-            </p>
-          </article>
-          <article>
-            <h3>Share a mod</h3>
-            <p>
-              Export JSON and send the file to the server operator. They import
-              it and save it on their server. Imported files are validated; they
-              do not execute scripts. A player can export a draft even without
-              permission to save on a live server.
-            </p>
-          </article>
-          <article>
-            <h3>Go beyond the editors</h3>
-            <p>
-              <code>games/crownfall/catalog.h</code> defines the roster and
-              costs. <code>games/crownfall/models.h</code> defines moddable
-              data. <code>games/crownfall/world.cpp</code> contains the rules.
-              <code>web/art.js</code> generates the single sprite image. Follow
-              <code>docs/MODDING.md</code> to add mechanics and artwork.
-            </p>
-          </article>
-        </div>
-        <p class="editor-tip">
-          Saving a mod does not change a match already in progress. Restart or
-          create a new match to apply it. Save and export important designs
-          before removing local data.
-        </p>
-      </section>
-      <input
-        type="file"
-        id="mod-import"
-        accept="application/json,.json"
-        class="hidden"
-      />
-    </dialog>
+    <dialog id="mod-workshop"></dialog>
     <dialog id="peer-dialog" class="peer-dialog">
       <h2>Browser multiplayer · WebRTC</h2>
-      <p>The hosting tab runs the match. Exchange one invitation and answer per friend.
-      HTTPS or localhost is required. LAN can connect directly; Internet connections
-      may require STUN/TURN. An IP address alone cannot make a browser serve HTTP.</p>
-      <details><summary>Connection settings</summary><label>ICE servers (JSON, optional)<textarea id="peer-ice" rows="3">[]</textarea></label>
-      <p>For Internet discovery, both players can use [{"urls":"stun:stun.l.google.com:19302"}].
-      Restrictive NATs need an independently configured TURN relay; this service is not bundled.</p></details>
+      <p>
+        The hosting tab runs the match. Exchange one invitation and answer per
+        friend. HTTPS or localhost is required. LAN can connect directly;
+        Internet connections may require STUN/TURN. An IP address alone cannot
+        make a browser serve HTTP.
+      </p>
+      <details>
+        <summary>Connection settings</summary>
+        <label
+          >ICE servers (JSON, optional)<textarea id="peer-ice" rows="3">
+[]</textarea
+          >
+        </label>
+        <p>
+          For Internet discovery, both players can use
+          [{"urls":"stun:stun.l.google.com:19302"}]. Restrictive NATs need an
+          independently configured TURN relay; this service is not bundled.
+        </p>
+      </details>
       <section id="peer-host-controls">
         <button id="peer-create-invite">Create one-use invitation</button>
-        <label>Send this invitation to your friend<textarea id="peer-host-code" rows="3" readonly></textarea></label>
+        <label
+          >Send this invitation to your friend<textarea
+            id="peer-host-code"
+            rows="3"
+            readonly
+          ></textarea>
+        </label>
         <button id="peer-host-code-copy">Copy invitation</button>
-        <label>Paste their answer<textarea id="peer-host-answer" rows="3"></textarea></label>
+        <label
+          >Paste their answer<textarea
+            id="peer-host-answer"
+            rows="3"
+          ></textarea>
+        </label>
         <button id="peer-accept-answer">Accept answer</button>
       </section>
       <section id="peer-join-controls" hidden>
-        <label>Join as<select id="peer-seat"><option value="join">Player</option><option value="watch">Spectator</option></select></label>
-        <label>Paste the host invitation<textarea id="peer-join-code" rows="3"></textarea></label>
+        <label
+          >Join as<select id="peer-seat">
+            <option value="join">Player</option>
+            <option value="watch">Spectator</option>
+          </select></label
+        >
+        <label
+          >Paste the host invitation<textarea
+            id="peer-join-code"
+            rows="3"
+          ></textarea>
+        </label>
         <button id="peer-create-answer">Create answer</button>
-        <label>Send this answer back to the host<textarea id="peer-answer-code" rows="3" readonly></textarea></label>
+        <label
+          >Send this answer back to the host<textarea
+            id="peer-answer-code"
+            rows="3"
+            readonly
+          ></textarea>
+        </label>
         <button id="peer-answer-code-copy">Copy answer</button>
       </section>
-      <p id="peer-status" role="status">Share codes privately. Keep the host tab awake.</p>
-      <div id="peer-connections"></div><button id="peer-close">Close</button>
+      <p id="peer-status" role="status">
+        Share codes privately. Keep the host tab awake.
+      </p>
+      <div id="peer-connections"></div>
+      <button id="peer-close">Close</button>
     </dialog>
-    <script src="./engine-bootstrap.js"></script><script src="./art.js"></script>
-    <script src="./sound.js"></script>
-    <script src="./controls.js"></script>
-    <script src="./motion.js"></script>
-    <script src="./damage.js"></script>
-    <script src="./perf.js"></script>
-    <script src="./ground.js"></script>
-    <script src="./game.js"></script>
-    <script src="./workshop.js"></script>
-    <script src="./peer.js"></script>
-  </body>
+    <dialog id="diplomacy-dialog">
+      <h2>⚖ Diplomacy</h2>
+      <p>
+        Neutral: ceasefire with units and buildings. Allies require mutual
+        consent. Enemy: all military targets.
+      </p>
+      <div id="diplomacy-rows"></div>
+      <div id="diplomacy-audit" hidden></div>
+      <button id="diplomacy-close">Close</button>
+    </dialog>
+    <dialog id="tribute-dialog">
+      <h2>Send resources by carriage</h2>
+      <p>
+        Requires an available carriage. Lost cargo is destroyed; Goblin/Rebel
+        raiders salvage 20%.
+      </p>
+      <form id="tribute-form">
+        <div class="field-row">
+          <label
+            >Food<input
+              id="tribute0"
+              type="number"
+              min="0"
+              max="500"
+              step="1"
+              value="0"
+              required /></label
+          ><label
+            >Wood<input
+              id="tribute1"
+              type="number"
+              min="0"
+              max="500"
+              step="1"
+              value="0"
+              required /></label
+          ><label
+            >Gold<input
+              id="tribute2"
+              type="number"
+              min="0"
+              max="500"
+              step="1"
+              value="0"
+              required /></label
+          ><label
+            >Stone<input
+              id="tribute3"
+              type="number"
+              min="0"
+              max="500"
+              step="1"
+              value="0"
+              required
+          /></label>
+        </div>
+        <button type="submit">Dispatch carriage</button
+        ><button type="button" id="tribute-close">Cancel</button>
+      </form>
+    </dialog>
+    <script src="./engine-bootstrap.js"></script>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+  <script src="demo.js"></script></body>
 </html>
